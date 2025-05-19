@@ -1,0 +1,18 @@
+/* dashboard.page.component.css */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+nz-table {
+  margin-top: 20px;
+}
+
+.actions button {
+  margin: 0 5px;
+}
+
+nz-form-item {
+  margin-bottom: 16px;
+}

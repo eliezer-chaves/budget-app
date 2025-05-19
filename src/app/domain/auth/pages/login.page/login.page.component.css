@@ -1,0 +1,26 @@
+.google-signup-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  width: 100%;
+  font-weight: 500;
+  gap: 12px;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+}
+
+.google-signup-button:hover {
+  border-color: #40a9ff;
+}
+
+.google-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

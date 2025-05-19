@@ -1,0 +1,54 @@
+<div class="bg-white rounded p-4 shadow " style="width: 400px;">
+  <h4 class="text-center">Login</h4>
+  <form nz-form nzLayout="vertical" [formGroup]="formularioLogin">
+    <nz-form-item>
+      <nz-form-label nzFor="email">E-mail:</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="email" formControlName="email" placeholder="Digite sua email"/>
+      </nz-form-control>
+    </nz-form-item>
+
+
+    <nz-form-item>
+    
+      <nz-form-label>Senha:</nz-form-label>
+      <nz-form-control [nzErrorTip]="'Senha deve ter no mínimo 6 caracteres'">
+        <nz-input-group [nzSuffix]="passwordSuffix">
+          <input nz-input [type]="passwordVisible ? 'text' : 'password'" formControlName="password"
+            placeholder="Digite sua senha" />
+        </nz-input-group>
+        <ng-template #passwordSuffix>
+          <nz-icon class="ant-input-password-icon" [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+            (click)="passwordVisible = !passwordVisible"></nz-icon>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <button nz-button nzType="primary" nzBlock (click)="login()"
+    
+      [nzLoading]="LoadingService.loading()">Login</button>
+
+    <nz-form-item nz-flex [nzVertical]="isVertical">
+      <a routerLink="/auth/forgot-password" class="login-form-forgot mt-3">
+        Esqueci minha senha
+      </a>
+     
+    </nz-form-item>
+    
+    <a routerLink="/auth/create-account" class="login-form-forgot mt-3">
+      Não tem uma conta? Cadastre-se
+    </a>
+    <nz-divider nzText="ou" class="divider-text-small"></nz-divider>
+
+    <button nz-button nzType="default" nzSize="large" (click)="registerWithGoogle()" class="google-signup-button">
+      <span class="button-content">
+        <img     src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+alt="Logo do Google"
+          class="google-logo" />
+        Continuar com o Google
+      </span>
+    </button>
+
+  </form>
+
+</div>

@@ -1,0 +1,296 @@
+<div class="container p-3 rounded shadow bg-white mt-3" id="form-add">
+    <!-- Data e Mercado -->
+    <h5 class="text-center mb-4"><b>Adicionar Items</b></h5>
+
+    <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
+        <div nz-col nzSpan="12">
+            <nz-input-group nzAddOnBefore="Data">
+                <nz-date-picker [(ngModel)]="dataCompra" nzDisabled nzFormat="dd/MM/yyyy"
+                    class="w-100"></nz-date-picker>
+            </nz-input-group>
+        </div>
+        <div nz-col nzSpan="12">
+            <nz-input-group nzAddOnBefore="Mercado">
+                <input type="text" nz-input [(ngModel)]="mercado" name="mercadoNome" [disabled]="true" class="w-100" />
+            </nz-input-group>
+        </div>
+    </div>
+
+    <!-- Item e Carrinho -->
+    <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
+        <div nz-col nzSpan="12">
+            <nz-input-group nzAddOnBefore="Carrinho">
+                <nz-select [(ngModel)]="carrinhoSelecionado" nzPlaceHolder="Selecione um carrinho" class="w-100"
+                    (ngModelChange)="limparInputs()">
+                    <nz-option *ngFor="let nome of nomeCarrinhos" [nzValue]="nome" [nzLabel]="nome"></nz-option>
+                </nz-select>
+            </nz-input-group>
+        </div>
+        <div nz-col nzSpan="12">
+            <nz-input-group nzAddOnBefore="Item">
+                <input type="text" nz-input [(ngModel)]="item" class="w-100" />
+            </nz-input-group>
+
+        </div>
+    </div>
+
+    <!-- Valor Unidade, Quantidade e Total -->
+    <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
+        <div nz-col nzSpan="8">
+            <nz-input-group nzAddOnBefore="Valor Unitário">
+                <input nz-input type="text" [(ngModel)]="valorUnidade" (ngModelChange)="onValorChange($event)"
+                    class="w-100" />
+            </nz-input-group>
+        </div>
+        <div nz-col nzSpan="8">
+            <nz-input-group nzAddOnBefore="Quantidade">
+                <nz-input-number [(ngModel)]="itemQtd" nzMin="1" nzStep="0.1" (ngModelChange)="calcularValorTotal()"
+                    class="w-100" />
+            </nz-input-group>
+        </div>
+        <div nz-col nzSpan="8">
+            <nz-input-group nzAddOnBefore="Valor Total">
+                <input nz-input type="text"
+                    [value]="'R$ ' + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
+                    disabled class="w-100" />
+            </nz-input-group>
+        </div>
+    </div>
+
+    <!-- Botão -->
+    <div nzJustify="center" nzAlign="middle" id="buttons-edit" class="d-flex justify-content-around">
+        <div>
+            <button nz-button nzType="default" (click)="voltar()" class="shadow  btn-table">
+                <nz-icon nzType="arrow-left" nzTheme="outline" class="me-1" />
+                Voltar
+            </button>
+        </div>
+        <div>
+            <button nz-button nzType="default" nzDanger (click)="showDeleteConfirm()" class="shadow  btn-table">
+                <nz-icon nzType="delete" nzTheme="outline" class="me-1" />
+                Cancelar Compra
+            </button>
+
+        </div>
+        <div>
+            <button nz-button nzType="primary" class="shadow btn-table" (click)="showModalCarrinho()">
+                <nz-icon nzType="shopping-cart" nzTheme="outline" />
+                Editar Carrinhos</button>
+        </div>
+        <div>
+            <button nz-button nzType="primary" class="shadow btn-table" (click)="showModalMercado()">
+                <nz-icon nzType="shop" nzTheme="outline" />
+                Editar Mercado</button>
+        </div>
+        <div>
+            <button nz-button nzType="primary" class="shadow btn-table" (click)="createItem()"
+                style="background-color: #38a138; border-color: #38a138;"><nz-icon nzType="plus"
+                    nzTheme="outline" />Adicionar Item</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="mostrarTabela" id="table" class="container shadow rounded bg-white mt-3 p-3" id="table-content">
+    <h5 class="text-center mb-3"><b>Dados da Compra</b></h5>
+
+    <div class="cards-container" id="cards-row">
+        <!-- Container dos cards (Total + Carrinhos) -->
+        <div class="cards-wrapper">
+            <div
+                class="card p-3 shadow total-card d-flex flex-direction-column align-items-center justify-content-center">
+                <div class="card-title text-center">
+                    <nz-icon nzType="shop" nzTheme="outline" />
+                    <b>Total</b>
+                </div>
+                <div class="card-value text-center ">
+                    <b>{{ totalGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</b>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap" style="gap: 20px;">
+
+                <div *ngFor="let carrinho of totaisPorCarrinho" class="card p-3 shadow carrinho-card  d-flex flex-direction-column align-items-center justify-content-center">
+                    <div class="card-title text-center">
+                        <nz-icon nzType="shopping-cart" nzTheme="outline" />
+                        <b>{{carrinho.nome}}</b>
+                    </div>
+                    <div class="card-value text-center">
+                        {{ carrinho.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Finalizar Compra -->
+        <div class="button-wrapper">
+
+            <button nz-button nzType="primary" nzSize="large" (click)="finalizarCompra()"
+                [nzLoading]="LoadingService.loading()" class="shadow mt-2 btn-table">
+                <nz-icon nzType="check" nzTheme="outline" class="me-1" />
+
+                Finalizar Compra
+            </button>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <nz-table #borderedTable nzBordered nzSize="small"  [nzData]="tableItems" [nzLoading]="loading"
+            [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'">
+            <thead>
+                <tr>
+                    <th [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
+                        [nzSortDirections]="listOfColumns[0].sortDirections" class="text-center">
+                        {{ listOfColumns[0].name }}
+                    </th>
+
+                    <th [nzSortOrder]="listOfColumns[1].sortOrder" [nzSortFn]="listOfColumns[1].sortFn"
+                        [nzSortDirections]="listOfColumns[1].sortDirections" class="text-center">
+                        {{ listOfColumns[1].name }}
+                    </th>
+
+                    <th [nzSortOrder]="listOfColumns[2].sortOrder" [nzSortFn]="listOfColumns[2].sortFn"
+                        [nzSortDirections]="listOfColumns[2].sortDirections" class="text-center">
+                        {{ listOfColumns[2].name }}
+                    </th>
+
+                    <th [nzSortOrder]="listOfColumns[3].sortOrder" [nzSortFn]="listOfColumns[3].sortFn"
+                        [nzSortDirections]="listOfColumns[3].sortDirections" class="text-center">
+                        {{ listOfColumns[3].name }}
+                    </th>
+
+                    <th [nzSortOrder]="listOfColumns[4].sortOrder" [nzSortFn]="listOfColumns[4].sortFn"
+                        [nzSortDirections]="listOfColumns[4].sortDirections"
+                        [nzFilterMultiple]="listOfColumns[4].filterConfig?.filterMultiple ?? false"
+                        [nzFilters]="listOfColumns[4].filterConfig?.listOfFilter ?? []"
+                        [nzFilterFn]="listOfColumns[4].filterConfig?.filterFn ?? null" class="text-center">
+                        {{ listOfColumns[4].name }}
+                    </th>
+
+                    <th [nzSortOrder]="listOfColumns[5].sortOrder" [nzSortFn]="listOfColumns[5].sortFn"
+                        [nzSortDirections]="listOfColumns[5].sortDirections" class="text-center">
+                        {{ listOfColumns[5].name }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of borderedTable.data" class="text-center">
+                    <td>
+                        <ng-container *ngIf="!editCache[data.id]?.edit; else editName">
+                            {{ data.name }}
+                        </ng-container>
+                        <ng-template #editName>
+                            <input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" />
+                        </ng-template>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="!editCache[data.id]?.edit; else editQuantity">
+                            {{ data.quantity }}
+                        </ng-container>
+                        <ng-template #editQuantity>
+                            <nz-input-number [(ngModel)]="editCache[data.id].data.quantity" nzMin="1"
+                                nzStep="0.1"></nz-input-number>
+                        </ng-template>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="!editCache[data.id]?.edit; else editValue">
+                            {{ data.value | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                        </ng-container>
+                        <ng-template #editValue>
+                            <input type="number" step="0.01" nz-input [(ngModel)]="editCache[data.id].data.value"
+                                (ngModelChange)="onValorChangeTable($event)" />
+                        </ng-template>
+                    </td>
+                    <td>
+                        {{ data.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                    </td>
+                    <td>
+                        <ng-container *ngIf="!editCache[data.id]?.edit; else editCart">
+                            {{ data.cart }}
+                        </ng-container>
+                        <ng-template #editCart>
+                            <nz-select [(ngModel)]="editCache[data.id].data.cart" class="w-100">
+                                <nz-option *ngFor="let nome of nomeCarrinhos" [nzValue]="nome"
+                                    [nzLabel]="nome"></nz-option>
+                            </nz-select>
+                        </ng-template>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="!editCache[data.id]?.edit; else saveCancel">
+                            <button nz-button nzType="primary" class="edit-button" (click)="startEdit(data.id)">
+                                <nz-icon nzType="edit" nzTheme="outline" />
+                                Editar
+                            </button>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <button nz-button nzType="primary" nzDanger nz-popconfirm
+                                nzPopconfirmTitle="Tem certeza que deseja remover este item?"
+                                (nzOnConfirm)="deleteItem(data.id)" class="edit-button">
+                                <nz-icon nzType="delete" nzTheme="outline" />
+                                Remover
+                            </button>
+                        </ng-container>
+                        <ng-template #saveCancel>
+                            <button nz-button nzType="primary" (click)="saveEdit(data.id)" class="save edit-button">
+                                <nz-icon nzType="save" nzTheme="outline" />
+                                Salvar
+                            </button>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <button nz-button class="edit-button" (click)="cancelEdit(data.id)">
+                                <nz-icon nzType="close" nzTheme="outline" />Cancelar
+                            </button>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+
+            <ng-template #rangeTemplate let-range="range" let-total>
+                Total de itens: {{ total }}
+            </ng-template>
+            <ng-template #titleTemplate >
+                Total de itens: {{ mercado }}
+            </ng-template>
+        </nz-table>
+    </div>
+</div>
+
+<!-- Modal Mercado -->
+<nz-modal [(nzVisible)]="isVisibleMercado" [nzTitle]="modalTitleMercado" [nzContent]="modalContentMercado"
+    [nzFooter]="modalFooterMercado" (nzOnCancel)="handleCancelMercado()">
+    <ng-template #modalTitleMercado>Editar Mercado</ng-template>
+
+    <ng-template #modalContentMercado>
+        <nz-input-group nzAddOnBefore="Data" class="mb-4">
+            <nz-date-picker [(ngModel)]="dataCompra" nzFormat="dd/MM/yyyy" class="w-100 "></nz-date-picker>
+        </nz-input-group>
+        <nz-input-group nzAddOnBefore="Mercado">
+            <input type="text" nz-input [(ngModel)]="mercado" name="mercadoNome" class="w-100" />
+        </nz-input-group>
+    </ng-template>
+
+    <ng-template #modalFooterMercado>
+        <button nz-button nzType="default" (click)="handleCancelMercado()">Cancelar</button>
+        <button nz-button nzType="primary" (click)="handleOkMercado()"
+            [nzLoading]="LoadingService.loading()">Alterar</button>
+    </ng-template>
+</nz-modal>
+
+<!-- Modal Carrinhos -->
+<nz-modal [(nzVisible)]="isVisibleCarrinho" [nzTitle]="modalTitleCarrinhos" [nzContent]="modalContentCarrinhos"
+    [nzFooter]="modalFooterCarrinhos" (nzOnCancel)="handleCancelCarrinhos()">
+    <ng-template #modalTitleCarrinhos>Editar Carrinhos</ng-template>
+
+    <ng-template #modalContentCarrinhos>
+        <div *ngFor="let cart of carts; let i = index" class="mb-2">
+            <nz-input-group [nzAddOnBefore]="'Categoria ' + (i + 1)">
+                <input type="text" nz-input [(ngModel)]="cart.nome"  />
+            </nz-input-group>
+            
+        </div>
+
+
+    </ng-template>
+
+    <ng-template #modalFooterCarrinhos>
+        <button nz-button nzType="default" (click)="handleCancelCarrinhos()">Cancelar</button>
+        <button nz-button nzType="primary" (click)="handleOkCarrinhos()"
+            [nzLoading]="LoadingService.loading()">Alterar</button>
+    </ng-template>
+</nz-modal>

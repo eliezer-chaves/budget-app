@@ -1,0 +1,1 @@
+A pasta Apis lida com a lógica para lidar com o Backend a pasta Services, lida com demais lógicas

@@ -1,0 +1,8 @@
+.ant-input-password-icon {
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.ant-input-password-icon:hover {
+  color: rgba(0, 0, 0, 0.65);
+}

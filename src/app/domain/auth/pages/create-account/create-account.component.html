@@ -1,0 +1,103 @@
+<div class="bg-white rounded p-4 shadow" style="max-width: 350px;">
+    <h4 class="text-center">Criar Conta</h4>
+
+    <form [formGroup]="formularioCadastro" nz-form [nzLayout]="'vertical'">
+        <nz-row [nzGutter]="16">
+            <!-- Nome -->
+            <nz-col [nzSpan]="24">
+                <nz-form-item>
+                    <nz-form-label>Nome:</nz-form-label>
+                    <nz-form-control [nzErrorTip]="'Nome é obrigatório'">
+                        <input nz-input formControlName="nome" placeholder="Digite seu nome completo" />
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+
+            <!-- Telefone -->
+            <nz-col [nzSpan]="24">
+                <nz-form-item>
+                    <nz-form-label>Telefone:</nz-form-label>
+                    <nz-form-control [nzErrorTip]="'Telefone é obrigatório'">
+                        <input nz-input
+                        formControlName="telefone"
+                        placeholder="Digite seu telefone" 
+                        mask="(00) 0000-0000||(00) 00000-0000" 
+                       />
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+
+            <!-- Email -->
+            <nz-col [nzSpan]="24">
+                <nz-form-item>
+                    <nz-form-label>Email:</nz-form-label>
+                    <nz-form-control [nzErrorTip]="'Email inválido ou obrigatório'">
+                        <input nz-input formControlName="email" placeholder="Digite seu email" />
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+
+            <!-- Senha -->
+            <nz-col [nzSpan]="24">
+                <nz-form-item>
+                    
+                    <nz-form-label>Senha:</nz-form-label>
+                    <nz-form-control [nzErrorTip]="'Senha deve ter no mínimo 6 caracteres'">
+                        <nz-input-group [nzSuffix]="passwordSuffix">
+                            <input nz-input [type]="passwordVisible ? 'text' : 'password'" formControlName="password"
+                                placeholder="Digite sua senha" />
+                        </nz-input-group>
+                        <ng-template #passwordSuffix>
+                            <nz-icon class="ant-input-password-icon"
+                                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                                (click)="passwordVisible = !passwordVisible"></nz-icon>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+
+            <!-- Confirmar Senha -->
+            <nz-col [nzSpan]="24">
+                <nz-form-item>
+                    <nz-form-label>Confirmar Senha:</nz-form-label>
+                    <nz-form-control [nzErrorTip]="confirmPasswordErrorTpl"
+                        [nzValidateStatus]="formularioCadastro.get('confirmPassword')!">
+                        <nz-input-group [nzSuffix]="confirmPasswordSuffix">
+                            <input nz-input [type]="confirmPasswordVisible ? 'text' : 'password'"
+                                formControlName="confirmPassword" placeholder="Confirme sua senha" />
+                        </nz-input-group>
+                        <ng-template #confirmPasswordSuffix>
+                            <nz-icon class="ant-input-password-icon"
+                                [nzType]="confirmPasswordVisible ? 'eye-invisible' : 'eye'"
+                                (click)="confirmPasswordVisible = !confirmPasswordVisible"></nz-icon>
+                        </ng-template>
+
+                        <ng-template #confirmPasswordErrorTpl let-control>
+                            <ng-container *ngIf="control.hasError('required')">
+                                Confirmação de senha é obrigatória.
+                            </ng-container>
+                            <ng-container *ngIf="formularioCadastro.hasError('passwordMismatch')">
+                                As senhas não coincidem.
+                            </ng-container>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+        </nz-row>
+
+        <!-- Botão Criar Conta -->
+        <nz-form-item>
+            <nz-form-control>
+                <button nzBlock nz-button nzType="primary" [disabled]="formularioCadastro.invalid"
+                    (click)="enviarCadastro()"
+                    [nzLoading]="loadingService.loading()">
+                    Criar conta
+                </button>
+            </nz-form-control>
+        </nz-form-item>
+
+        <a routerLink="/auth/login" nzBlock class="login-form-forgot mt-3">
+            Voltar
+        </a>
+    </form>
+</div>
