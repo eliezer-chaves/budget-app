@@ -40,11 +40,17 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzInputNumberModule,
     NzDividerModule,
     RouterModule,
-    NzSpinComponent
+    NzSpinComponent,
+    CommonModule,
+    FormsModule,
+    NzInputModule,
+    NzButtonModule,
+    NzTableModule,
+    NzIconModule, // se você usar <nz-icon>
   ],
 })
 
-export class SearchTable implements OnInit {
+export class SearchTableComponent implements OnInit {
   protected LoadingService = inject(LoadingService);
   private supabase = injectSupabase();
 

@@ -26,7 +26,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzI18nService, pt_BR } from 'ng-zorro-antd/i18n';
 import { SearchItemData } from '@domain/dashboard/interfaces/searchItemData';
-import { SearchTable } from "../../components/search-table/search-table.component";
+import { SearchTableComponent } from '@domain/dashboard/components/search-table/search-table.component'; // ✅ IMPORT
+
 @Component({
   standalone: true,
   selector: 'app-dashboard.page',
@@ -49,7 +50,7 @@ import { SearchTable } from "../../components/search-table/search-table.componen
     NzInputNumberModule,
     NzDividerModule,
     RouterModule,
-    SearchTable
+    SearchTableComponent 
 ],
 })
 export class DashboardPageComponent implements OnInit {
