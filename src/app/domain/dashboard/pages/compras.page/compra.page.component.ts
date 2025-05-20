@@ -1,33 +1,38 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { AuthService } from '@domain/auth/services/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Router } from '@angular/router';
+import { Data, Router } from '@angular/router';
 import { iUser } from '@domain/auth/interfaces/user.interface';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '@shared/services/loading/loading.service';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTableFilterFn, NzTableFilterList, NzTableModule, NzTableSortFn, NzTableSortOrder } from 'ng-zorro-antd/table';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { injectSupabase } from '@shared/functions/inject-supabase.function';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDividerComponent, NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { getISOWeek } from 'date-fns';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzDatePickerComponent, NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzI18nService, pt_BR } from 'ng-zorro-antd/i18n';
+import { map } from 'rxjs';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzCardComponent } from 'ng-zorro-antd/card';
 import { CartItem } from '@domain/dashboard/interfaces/CartItem';
 import { PurchaseData } from '@domain/dashboard/interfaces/PurchaseData';
 import { ColumnItem } from '@domain/dashboard/interfaces/ColumnItem';
 import { ItemData } from '@domain/dashboard/interfaces/ItemData';
-
+ 
 
 @Component({
   standalone: true,

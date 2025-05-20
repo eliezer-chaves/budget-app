@@ -5,8 +5,37 @@
   </ng-template>
 </div>
 <div class="container">
-  <button nz-button nzType="primary" (click)="showModal()">Iniciar Compra</button>
+  <button nz-button nzType="primary" (click)="showModal()">Nova Compra</button>
 
+</div>
+<div class="container mt-4">
+  <h5>Dados das ultimas compras</h5>
+</div>
+<div class="container mt-4 d-flex justify-content-around">
+  <div class="card shadow p-3 d-flex align-items-center justify-content-center">
+    <b>Total Gasto</b>
+    <span *ngIf="totalGasto > 0 ; else templateSemCompra">{{totalGasto |
+      currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span>
+  </div>
+
+  <div class="card shadow p-3 d-flex align-items-center justify-content-center">
+    <b>Compras Finalizadas</b>
+    <span *ngIf="comprasRealizadas != 0 ; else templateSemCompra">{{comprasRealizadas}}</span>
+  </div>
+  <div class="card shadow p-3 d-flex align-items-center justify-content-center">
+    <b>Compras em Aberto</b>
+    <span *ngIf="comprasEmAberto != 0 ; else templateSemCompraAberta">{{comprasEmAberto}}</span>
+  </div>
+  <ng-template #templateSemCompra>
+    Nenhuma Compra
+  </ng-template>
+  <ng-template #templateSemCompraAberta>
+    Nenhuma Compra em Aberto
+  </ng-template>
+</div>
+
+<div class="container mt-4">
+    <app-search-table ></app-search-table>
 </div>
 
 <!--Modal-->
@@ -22,18 +51,21 @@
     </nz-input-group>
 
     <nz-form-control [nzErrorTip]="'O nome do mercado é obrigatório'">
-      <nz-input-group nzAddOnBefore="Mercado" class="mt-2 ">
-        <input type="text" nz-input placeholder="Ex: Supermercado" [(ngModel)]="mercadoNome" name="mercadoNome" required #mercadoInput="ngModel" />
+      <nz-input-group nzAddOnBefore="Local" class="mt-2 ">
+        <input type="text" nz-input placeholder="Ex: Supermercado" [(ngModel)]="mercadoNome" name="mercadoNome" required
+          #mercadoInput="ngModel" />
       </nz-input-group>
     </nz-form-control>
 
-    <nz-input-group nzAddOnBefore="Quantidade de Carrinhos" class="mt-2">
-      <nz-input-number [(ngModel)]="qtdCarrinhos" nzMin="1" class="w-100" (ngModelChange)="onQtdCarrinhosChange($event)" value=1 />
+    <nz-input-group nzAddOnBefore="Quantidade de Categorias" class="mt-2">
+      <nz-input-number [(ngModel)]="qtdCarrinhos" nzMin="1" class="w-100" (ngModelChange)="onQtdCarrinhosChange($event)"
+        value=1 />
     </nz-input-group>
 
     <div *ngFor="let name of carrinhosNames; let i = index; trackBy: trackByFn">
       <nz-input-group [nzAddOnBefore]="'Categoria'" class="mt-2">
-        <input #inputEl type="text" nz-input placeholder="Ex: Alimentação" [(ngModel)]="carrinhosNames[i]" (keydown)="onKeyDown($event, i)" />
+        <input #inputEl type="text" nz-input placeholder="Ex: Alimentação" [(ngModel)]="carrinhosNames[i]"
+          (keydown)="onKeyDown($event, i)" />
       </nz-input-group>
     </div>
   </ng-template>

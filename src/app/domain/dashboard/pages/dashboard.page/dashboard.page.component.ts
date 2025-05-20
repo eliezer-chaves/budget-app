@@ -25,7 +25,8 @@ import { NzDatePickerComponent, NzDatePickerModule } from 'ng-zorro-antd/date-pi
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzI18nService, pt_BR } from 'ng-zorro-antd/i18n';
-
+import { SearchItemData } from '@domain/dashboard/interfaces/searchItemData';
+import { SearchTable } from "../../components/search-table/search-table.component";
 @Component({
   standalone: true,
   selector: 'app-dashboard.page',
@@ -47,8 +48,9 @@ import { NzI18nService, pt_BR } from 'ng-zorro-antd/i18n';
     NzIconModule,
     NzInputNumberModule,
     NzDividerModule,
-    RouterModule
-  ],
+    RouterModule,
+    SearchTable
+],
 })
 export class DashboardPageComponent implements OnInit {
   private auth = inject(AuthService);
@@ -72,9 +74,50 @@ export class DashboardPageComponent implements OnInit {
   carrinhosNames: string[] = [''];
   @ViewChildren('inputEl') inputElements!: QueryList<ElementRef>;
 
+  totalGasto: number = 0
+  comprasRealizadas: number = 0
+  comprasEmAberto: number = 0
+  
+
   ngOnInit() {
     this.loadData();
+
     this.checkOpenPurchase();
+  }
+
+ 
+  async contarComprasEmAberto() {
+    const { data, error } = await this.supabase
+      .rpc('contar_compras_pendentes');
+
+    if (error) {
+    } else {
+      this.comprasEmAberto = data
+    }
+  }
+
+  async contarCompras() {
+    const { data, error } = await this.supabase
+      .rpc('contar_compras_usuario');
+
+    if (error) {
+    } else {
+      this.comprasRealizadas = data
+    }
+  }
+
+  async loadTotalGasto() {
+    this.totalGasto = 0;
+
+    const { data, error } = await this.supabase
+      .rpc('get_user_item_total');
+
+    if (error) {
+      return 0;
+    } else {
+      this.totalGasto = data
+      return data;
+    }
   }
 
   async loadData() {
@@ -82,6 +125,10 @@ export class DashboardPageComponent implements OnInit {
       const currentUser = await this.auth.loadUser();
       if (currentUser) {
         this.user.set(currentUser);
+        this.loadTotalGasto()
+        this.contarCompras()
+        this.contarComprasEmAberto()
+
       } else {
         this.message.error('Sessão inválida. Faça login novamente.');
       }

@@ -10,7 +10,7 @@
             </nz-input-group>
         </div>
         <div nz-col nzSpan="12">
-            <nz-input-group nzAddOnBefore="Mercado">
+            <nz-input-group nzAddOnBefore="Local">
                 <input type="text" nz-input [(ngModel)]="mercado" name="mercadoNome" [disabled]="true" class="w-100" />
             </nz-input-group>
         </div>
@@ -19,8 +19,8 @@
     <!-- Item e Carrinho -->
     <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
         <div nz-col nzSpan="12">
-            <nz-input-group nzAddOnBefore="Carrinho">
-                <nz-select [(ngModel)]="carrinhoSelecionado" nzPlaceHolder="Selecione um carrinho" class="w-100"
+            <nz-input-group nzAddOnBefore="Categoria">
+                <nz-select [(ngModel)]="carrinhoSelecionado" nzPlaceHolder="Selecione uma categoria" class="w-100"
                     (ngModelChange)="limparInputs()">
                     <nz-option *ngFor="let nome of nomeCarrinhos" [nzValue]="nome" [nzLabel]="nome"></nz-option>
                 </nz-select>
@@ -75,12 +75,12 @@
         <div>
             <button nz-button nzType="primary" class="shadow btn-table" (click)="showModalCarrinho()">
                 <nz-icon nzType="shopping-cart" nzTheme="outline"/>
-                Editar Carrinhos</button>
+                Editar Categoria</button>
         </div>
         <div>
             <button nz-button nzType="primary" class="shadow btn-table" (click)="showModalMercado()">
                 <nz-icon nzType="shop" nzTheme="outline" />
-                Editar Mercado</button>
+                Editar Local</button>
         </div>
         <div>
             <button nz-button nzType="primary" class="shadow btn-table" (click)="createItem()"
@@ -133,7 +133,7 @@
     </div>
 
     <div class="mt-4">
-        <nz-table #borderedTable nzBordered nzSize="small"  [nzData]="tableItems" [nzLoading]="loading"
+        <nz-table #borderedTable nzBordered nzSize="small"  [nzData]="tableItems"
             [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'">
             <thead>
                 <tr>
@@ -254,13 +254,13 @@
 <!-- Modal Mercado -->
 <nz-modal [(nzVisible)]="isVisibleMercado" [nzTitle]="modalTitleMercado" [nzContent]="modalContentMercado"
     [nzFooter]="modalFooterMercado" (nzOnCancel)="handleCancelMercado()">
-    <ng-template #modalTitleMercado>Editar Mercado</ng-template>
+    <ng-template #modalTitleMercado>Editar Local</ng-template>
 
     <ng-template #modalContentMercado>
         <nz-input-group nzAddOnBefore="Data" class="mb-4">
             <nz-date-picker [(ngModel)]="dataCompra" nzFormat="dd/MM/yyyy" class="w-100 "></nz-date-picker>
         </nz-input-group>
-        <nz-input-group nzAddOnBefore="Mercado">
+        <nz-input-group nzAddOnBefore="Local">
             <input type="text" nz-input [(ngModel)]="mercado" name="mercadoNome" class="w-100" />
         </nz-input-group>
     </ng-template>
@@ -275,7 +275,7 @@
 <!-- Modal Carrinhos -->
 <nz-modal [(nzVisible)]="isVisibleCarrinho" [nzTitle]="modalTitleCarrinhos" [nzContent]="modalContentCarrinhos"
     [nzFooter]="modalFooterCarrinhos" (nzOnCancel)="handleCancelCarrinhos()">
-    <ng-template #modalTitleCarrinhos>Editar Carrinhos</ng-template>
+    <ng-template #modalTitleCarrinhos>Editar Categoria</ng-template>
 
     <ng-template #modalContentCarrinhos>
         <div *ngFor="let cart of carts; let i = index" class="mb-2">
