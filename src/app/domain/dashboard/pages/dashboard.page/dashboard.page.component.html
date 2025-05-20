@@ -1,41 +1,99 @@
-<div class="container mt-4">
-  <h4 *ngIf="user(); else loading">Bem-vindo, {{user()?.full_name}}</h4>
+<div class="container mt-4 p-3 shadow bg-white rounded">
+  <h4 *ngIf="user(); else loading">Bem-vindo {{user()?.full_name | firstName}}</h4>
   <ng-template #loading>
     <p>Carregando dados do usuário...</p>
   </ng-template>
-</div>
-<div class="container">
-  <button nz-button nzType="primary" (click)="showModal()">Nova Compra</button>
 
+  <button nz-button nzType="primary" class="mt-4" (click)="showModal()">Nova Compra</button>
 </div>
-<div class="container mt-4">
-  <h5>Dados das ultimas compras</h5>
-</div>
-<div class="container mt-4 d-flex justify-content-around">
-  <div class="card shadow p-3 d-flex align-items-center justify-content-center">
-    <b>Total Gasto</b>
-    <span *ngIf="totalGasto > 0 ; else templateSemCompra">{{totalGasto |
-      currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span>
-  </div>
+<div class="container mt-4 shadow bg-white rounded p-3">
+  <h5 class="card-title">Dados das últimas compras</h5>
+  <div class="container mt-4 d-flex justify-content-around cards">
+    
+    <!-- Card 1: Total Gasto -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+      <div class="card shadow p-3 d-flex align-items-center justify-content-center card-resumo">
+        <b class="text-center card-label">Total Gasto</b>
+        <span class="text-center card-value mt-1" *ngIf="totalGasto > 0; else templateSemCompra">
+          {{ totalGasto | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </span>
+      </div>
+    </ng-container>
 
-  <div class="card shadow p-3 d-flex align-items-center justify-content-center">
-    <b>Compras Finalizadas</b>
-    <span *ngIf="comprasRealizadas != 0 ; else templateSemCompra">{{comprasRealizadas}}</span>
+    <!-- Card 2: Compras Realizadas -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+      <div class="card shadow p-3 d-flex align-items-center justify-content-center card-resumo">
+        <b class="text-center card-label ">Compras Realizadas</b>
+        <span class="text-center card-value mt-1" *ngIf="comprasRealizadas > 0; else templateSemCompra">
+          {{ comprasRealizadas }}
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- Card 3: Compras em Aberto -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+      <div class="card shadow p-3 d-flex align-items-center justify-content-center card-resumo">
+        <b class="text-center card-label">Compras em Aberto</b>
+        <span class="text-center card-value mt-1" *ngIf="comprasEmAberto > 0; else templateSemCompraEmAberto">
+          {{ comprasEmAberto }}
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- Templates Reutilizáveis -->
+    <ng-template #loadingTemplate>
+      <div class="card shadow p-3 d-flex align-items-center justify-content-center card-resumo">
+        <nz-spin [nzSize]="'small'"></nz-spin>
+      </div>
+    </ng-template>
+
+    <ng-template #templateSemCompra>
+      <span class="text-center card-value">Nenhuma Compra</span>
+    </ng-template>
+
+    <ng-template #templateSemCompraEmAberto>
+      <span class="text-center card-value">Nenhuma em Aberto</span>
+    </ng-template>
   </div>
-  <div class="card shadow p-3 d-flex align-items-center justify-content-center">
-    <b>Compras em Aberto</b>
-    <span *ngIf="comprasEmAberto != 0 ; else templateSemCompraAberta">{{comprasEmAberto}}</span>
-  </div>
-  <ng-template #templateSemCompra>
-    Nenhuma Compra
+</div>
+
+<div class="container mt-4 bg-white p-3 shadow rounded">
+  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="max-width: 300px;">
+    <input type="text" nz-input placeholder="Informe algum item..." [(ngModel)]="termoPesquisa"
+      (keyup.enter)="pesquisarItem()" />
+  </nz-input-group>
+
+  <ng-template #suffixIconButton>
+    <button nz-button nzType="primary" nzSize="default" nzSearch (click)="pesquisarItem()"
+      [nzLoading]="loadingSearchButton">
+      Pesquisar
+    </button>
   </ng-template>
-  <ng-template #templateSemCompraAberta>
-    Nenhuma Compra em Aberto
-  </ng-template>
-</div>
 
-<div class="container mt-4">
-    <app-search-table></app-search-table>
+  <div class="mt-4 ">
+    <nz-spin [nzSpinning]="loadingTable">
+      <nz-table #borderedTable nzBordered [nzData]="searchItems" [nzShowPagination]="false" class="">
+        <thead>
+          <tr>
+            <th class="text-center">Data</th>
+            <th class="text-center">Nome</th>
+            <th class="text-center">Preço</th>
+            <th class="text-center">Lugar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of searchItems" class="text-center">
+            <td class="text-center">{{ item.date | date: 'dd/MM/yyyy' }}</td>
+            <td class="text-center">{{ item.name }}</td>
+            <td class="text-center">
+              {{ item.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </td>
+            <td class="text-center">{{ item.place }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-spin>
+  </div>
 </div>
 
 <!--Modal-->

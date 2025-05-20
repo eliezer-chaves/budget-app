@@ -380,7 +380,7 @@ export class DashboardPageComponent implements OnInit {
     if (!this.carrinhoSelecionado || !this.nomeCarrinhos || !this.cartsIds) {
       return null;
     }
-
+    console.log(this.carrinhoSelecionado)
     const index: number = this.nomeCarrinhos.indexOf(this.carrinhoSelecionado);
     return index >= 0 ? this.cartsIds[index] : null;
   }

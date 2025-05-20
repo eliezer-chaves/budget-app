@@ -1,18 +1,45 @@
-/* dashboard.page.component.css */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
+/* Estilo base para os cards */
+.card-resumo {
+  min-width: 80px; 
+  min-height: 80px;
 }
 
-nz-table {
-  margin-top: 20px;
+/* Títulos dos cards */
+.card-label {
+  font-size: 1rem;
 }
 
-.actions button {
-  margin: 0 5px;
+/* Valores nos cards */
+.card-value {
+  font-size: 0.8rem;
 }
 
-nz-form-item {
-  margin-bottom: 16px;
+/* Título principal */
+.card-title {
+  font-size: 1.25rem;
+}
+
+/* Media query para telas pequenas */
+@media (max-width: 500px) {
+  .card-label {
+    font-size: 0.75rem; /* Reduz o tamanho da fonte do rótulo */
+  }
+  
+  .card-value {
+    font-size: 0.65rem; /* Reduz o tamanho da fonte do valor */
+  }
+  
+  .card-title {
+    font-size: 1rem; /* Reduz o título principal */
+  }
+  
+  .card-resumo {
+    min-width: 70px; /* Reduz ligeiramente o tamanho dos cards */
+    min-height: 70px;
+    padding: 0.5rem !important;
+  }
+  
+  .cards {
+    gap: 0.5rem; /* Adiciona espaço entre os cards */
+  }
 }

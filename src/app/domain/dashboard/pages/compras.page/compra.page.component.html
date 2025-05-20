@@ -74,7 +74,7 @@
         </div>
         <div>
             <button nz-button nzType="primary" class="shadow btn-table" (click)="showModalCarrinho()">
-                <nz-icon nzType="shopping-cart" nzTheme="outline"/>
+                <nz-icon nzType="shopping-cart" nzTheme="outline" />
                 Editar Categoria</button>
         </div>
         <div>
@@ -108,7 +108,8 @@
             </div>
             <div class="d-flex flex-wrap" style="gap: 20px;">
 
-                <div *ngFor="let carrinho of totaisPorCarrinho" class="card p-3 shadow carrinho-card  d-flex flex-direction-column align-items-center justify-content-center">
+                <div *ngFor="let carrinho of totaisPorCarrinho"
+                    class="card p-3 shadow carrinho-card  d-flex flex-direction-column align-items-center justify-content-center">
                     <div class="card-title text-center">
                         <nz-icon nzType="shopping-cart" nzTheme="outline" />
                         <b>{{carrinho.nome}}</b>
@@ -133,8 +134,8 @@
     </div>
 
     <div class="mt-4">
-        <nz-table #borderedTable nzBordered nzSize="small"  [nzData]="tableItems"
-            [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'">
+        <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
+            [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'">
             <thead>
                 <tr>
                     <th [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
@@ -244,7 +245,7 @@
             <ng-template #rangeTemplate let-range="range" let-total>
                 Total de itens: {{ total }}
             </ng-template>
-            <ng-template #titleTemplate >
+            <ng-template #titleTemplate>
                 Total de itens: {{ mercado }}
             </ng-template>
         </nz-table>
@@ -280,9 +281,9 @@
     <ng-template #modalContentCarrinhos>
         <div *ngFor="let cart of carts; let i = index" class="mb-2">
             <nz-input-group [nzAddOnBefore]="'Categoria ' + (i + 1)">
-                <input type="text" nz-input [(ngModel)]="cart.nome"  />
+                <input type="text" nz-input [(ngModel)]="cart.nome" />
             </nz-input-group>
-            
+
         </div>
 
 
@@ -294,4 +295,3 @@
             [nzLoading]="LoadingService.loading()">Alterar</button>
     </ng-template>
 </nz-modal>
-

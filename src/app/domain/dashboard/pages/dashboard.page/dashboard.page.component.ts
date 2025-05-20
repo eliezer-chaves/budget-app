@@ -26,8 +26,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzI18nService, pt_BR } from 'ng-zorro-antd/i18n';
 import { SearchItemData } from '@domain/dashboard/interfaces/searchItemData';
-import { SearchTableComponent } from '@domain/dashboard/components/search-table/search-table.component'; // ✅ IMPORT
-
+import { NzSpinComponent } from 'ng-zorro-antd/spin';
+import { FirstNamePipe } from '@shared/pipes/firstName.pipe/firstName.pipe';
 @Component({
   standalone: true,
   selector: 'app-dashboard.page',
@@ -50,8 +50,9 @@ import { SearchTableComponent } from '@domain/dashboard/components/search-table/
     NzInputNumberModule,
     NzDividerModule,
     RouterModule,
-    SearchTableComponent 
-],
+    NzSpinComponent,
+    FirstNamePipe
+  ],
 })
 export class DashboardPageComponent implements OnInit {
   private auth = inject(AuthService);
@@ -63,9 +64,9 @@ export class DashboardPageComponent implements OnInit {
   private modalService = inject(NzModalService);
 
   user = signal<iUser | null>(null);
-  loading = true;
+  loading = false;
   isOkLoading = false;
-
+  loadingData = true
   // Modal state
   isVisible = false;
   isConfirmLoading = false;
@@ -78,15 +79,55 @@ export class DashboardPageComponent implements OnInit {
   totalGasto: number = 0
   comprasRealizadas: number = 0
   comprasEmAberto: number = 0
-  
-
+  termoPesquisa: string = ''
+  searchItems: SearchItemData[] = []
+  loadingTable = false;
+  loadingSearchButton = false
+  loadingCards = true
   ngOnInit() {
     this.loadData();
-
     this.checkOpenPurchase();
   }
+  async pesquisarItem() {
+    this.loadingSearchButton = true; // Ativa o loading
+    this.searchItems = []
+    this.loadingTable = true
+    this.LoadingService.startLoading()
+    try {
+      const termo = this.termoPesquisa.trim().toLowerCase();
+      const { data, error } = await this.supabase
+        .from('itm_item')
+        .select(`
+        *,
+        car_carts:itm_cart_id (
+          car_purchase_id,
+          pur_purchase:car_purchase_id (
+            pur_date, pur_market_name
+          )
+        )`)
+        .ilike('itm_name', `%${termo}%`);
 
- 
+      if (data) {
+        for (let i = 0; i < data.length; i++) {
+          this.searchItems[i] = {
+            date: data[i].car_carts.pur_purchase.pur_date,
+            name: data[i].itm_name,
+            price: data[i].itm_value,
+            place: data[i].car_carts.pur_purchase.pur_market_name
+          };
+        }
+      }
+    }
+    catch (error) {
+      console.error('Erro ao buscar itens:', error);
+    } finally {
+      this.loadingSearchButton = false;
+      this.LoadingService.stopLoading()
+      this.loadingTable = false
+    }
+
+  }
+
   async contarComprasEmAberto() {
     const { data, error } = await this.supabase
       .rpc('contar_compras_pendentes');
@@ -117,6 +158,7 @@ export class DashboardPageComponent implements OnInit {
       return 0;
     } else {
       this.totalGasto = data
+      this.loadingCards = false
       return data;
     }
   }
