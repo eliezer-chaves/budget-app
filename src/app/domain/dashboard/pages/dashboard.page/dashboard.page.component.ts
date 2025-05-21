@@ -247,12 +247,6 @@ export class DashboardPageComponent implements OnInit {
   async createPurchase(){
     const userId = this.user()?.id;
 
-    if (!userId) {
-      this.message.error('Usuário não autenticado');
-      this.isConfirmLoading = false;
-      return;
-    }
-
     // Valida se campos críticos estão preenchidos
     if (
       !this.dataCompra ||
@@ -264,73 +258,77 @@ export class DashboardPageComponent implements OnInit {
       this.isConfirmLoading = false;
       return; // Sai da função se a validação falhar
     }
-    try {
-      // 1. Inserir a compra principal
-      const { data: purchaseData, error: purchaseError } = await this.supabase
-        .from('pur_purchase')
-        .insert([
-          {
-            pur_id: this.generateRandomId(),
-            pur_auth_id: userId,
-            pur_date: this.dataCompra,
-            pur_market_name: this.mercadoNome,
-            pur_carts_quantity: this.qtdCarrinhos,
-          }
-        ])
-        .select('pur_id');
+    console.log(this.dataCompra)
+    console.log(this.mercadoNome)
+    console.log(this.carrinhosNames)
+    
+    // try {
+    //   // 1. Inserir a compra principal
+    //   const { data: purchaseData, error: purchaseError } = await this.supabase
+    //     .from('pur_purchase')
+    //     .insert([
+    //       {
+    //         pur_id: this.generateRandomId(),
+    //         pur_auth_id: userId,
+    //         pur_date: this.dataCompra,
+    //         pur_market_name: this.mercadoNome,
+    //         pur_carts_quantity: this.qtdCarrinhos,
+    //       }
+    //     ])
+    //     .select('pur_id');
 
-      if (purchaseError || !purchaseData?.[0]?.pur_id) {
-        throw purchaseError || new Error('Falha ao obter ID da compra');
-      }
+    //   if (purchaseError || !purchaseData?.[0]?.pur_id) {
+    //     throw purchaseError || new Error('Falha ao obter ID da compra');
+    //   }
 
-      const purchaseId = purchaseData[0].pur_id;
+    //   const purchaseId = purchaseData[0].pur_id;
 
-      // 2. Inserir cada carrinho
-      const cartsIds = [];
-      for (const nomeCarrinho of this.carrinhosNames) {
-        const { data: cartData, error: cartError } = await this.supabase
-          .from('car_carts')
-          .insert([
-            {
-              car_name: nomeCarrinho,
-              car_purchase_id: purchaseId,
-              car_auth_id: userId,
-            }
-          ])
-          .select('car_id');
+    //   // 2. Inserir cada carrinho
+    //   const cartsIds = [];
+    //   for (const nomeCarrinho of this.carrinhosNames) {
+    //     const { data: cartData, error: cartError } = await this.supabase
+    //       .from('car_carts')
+    //       .insert([
+    //         {
+    //           car_name: nomeCarrinho,
+    //           car_purchase_id: purchaseId,
+    //           car_auth_id: userId,
+    //         }
+    //       ])
+    //       .select('car_id');
 
-        if (cartError || !cartData?.[0]?.car_id) {
-          console.error(`Erro ao inserir carrinho ${nomeCarrinho}:`, cartError);
-          continue;
-        }
-        cartsIds.push(cartData[0].car_id);
-      }
+    //     if (cartError || !cartData?.[0]?.car_id) {
+    //       console.error(`Erro ao inserir carrinho ${nomeCarrinho}:`, cartError);
+    //       continue;
+    //     }
+    //     cartsIds.push(cartData[0].car_id);
+    //   }
 
-      if (cartsIds.length === 0) {
-        throw new Error('Nenhum carrinho foi criado com sucesso');
-      }
+    //   if (cartsIds.length === 0) {
+    //     throw new Error('Nenhum carrinho foi criado com sucesso');
+    //   }
 
-      // Salvar no localStorage
-      const navigationState = {
-        purchaseId: purchaseId,
-        cartsIds: cartsIds,
-        dataCompra: this.dataCompra,
-        mercado: this.mercadoNome,
-        qtdCarrinhos: this.qtdCarrinhos,
-        nomeCarrinhos: this.carrinhosNames,
-        compraFinalizada: false,
-        items: []
-      };
-      localStorage.setItem('ultimaCompra', JSON.stringify(navigationState));
-      this.router.navigate(['/dashboard/compras']);
+    //   // Salvar no localStorage
+    //   const navigationState = {
+    //     purchaseId: purchaseId,
+    //     cartsIds: cartsIds,
+    //     dataCompra: this.dataCompra,
+    //     mercado: this.mercadoNome,
+    //     qtdCarrinhos: this.qtdCarrinhos,
+    //     nomeCarrinhos: this.carrinhosNames,
+    //     compraFinalizada: false,
+    //     items: []
+    //   };
+    //   localStorage.setItem('ultimaCompra', JSON.stringify(navigationState));
+    //   this.router.navigate(['/dashboard/compras']);
 
-    } catch (error) {
-      console.error('Erro ao criar compra:', error);
-      this.message.error('Erro ao iniciar nova compra');
-    } finally {
-      this.isConfirmLoading = false;
-      this.isVisible = false;
-    }
+    // } catch (error) {
+    //   console.error('Erro ao criar compra:', error);
+    //   this.message.error('Erro ao iniciar nova compra');
+    // } finally {
+    //   this.isConfirmLoading = false;
+    //   this.isVisible = false;
+    // }
   }
 
   trackByFn(index: number): number {
