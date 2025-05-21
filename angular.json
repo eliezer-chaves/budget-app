@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "login-sign-in": {
+    "budgets": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/login-sign-in",
+            "outputPath": "dist/budgets",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "zone.js",
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "login-sign-in:build:production"
+              "buildTarget": "budgets:build:production"
             },
             "development": {
-              "buildTarget": "login-sign-in:build:development"
+              "buildTarget": "budgets:build:development"
             }
           },
           "defaultConfiguration": "development"

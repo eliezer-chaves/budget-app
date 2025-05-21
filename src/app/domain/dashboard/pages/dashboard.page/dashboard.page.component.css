@@ -5,18 +5,19 @@
   align-items: center;
 }
 .card-resumo-spin {
-  min-height: 80px; 
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 80px;
+  min-width: 300px;
 }
 .card-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: left;
-  flex-wrap: nowrap; 
-  min-height: 80px; 
+  flex-wrap: nowrap;
+  min-height: 80px;
   min-width: 300px;
 }
 
@@ -72,7 +73,7 @@
   }
 }
 
-.btn-default{
+.btn-default {
   border-color: #1890ff !important;
   color: #1890ff;
 }

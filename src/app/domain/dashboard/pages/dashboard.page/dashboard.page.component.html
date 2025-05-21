@@ -1,11 +1,11 @@
 <div class="container mt-4 p-3 shadow bg-white rounded">
-  <h4 *ngIf="user(); else loading">Bem-vindo {{user()?.full_name | firstName}}</h4>
+  <h4 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h4>
   <ng-template #loading>
     <p>Carregando dados do usuário...</p>
   </ng-template>
   <div class="mt-3 ">
     <button nz-button nzType="primary" (click)="showModal()">Novo Orçamento</button>
-    <button nz-button nzType="default" class="ms-2 btn-default">Ver Histórico de Orçamentos</button>
+    <button nz-button nzType="default" class="ms-2 btn-default">Orçamentos em Aberto</button>
   </div>
 </div>
 <div class="mt-4">

@@ -88,6 +88,7 @@ export class DashboardPageComponent implements OnInit {
     this.loadData();
     this.checkOpenPurchase();
   }
+
   async pesquisarItem() {
     this.loadingSearchButton = true; // Ativa o loading
     this.searchItems = []
@@ -239,7 +240,11 @@ export class DashboardPageComponent implements OnInit {
   }
 
   async handleOk() {
-    this.isConfirmLoading = true;
+    
+   this.createPurchase()
+  }
+
+  async createPurchase(){
     const userId = this.user()?.id;
 
     if (!userId) {
@@ -327,8 +332,6 @@ export class DashboardPageComponent implements OnInit {
       this.isVisible = false;
     }
   }
-
-
 
   trackByFn(index: number): number {
     return index;
