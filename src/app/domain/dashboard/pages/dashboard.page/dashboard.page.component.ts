@@ -210,8 +210,8 @@ export class DashboardPageComponent implements OnInit {
       const dadosCompra = JSON.parse(dadosSalvos);
       if (dadosCompra.compraFinalizada === false) {
         this.modalService.info({
-          nzTitle: 'Compra em Andamento',
-          nzContent: 'Você já tem uma compra em aberto. Por favor, finalize a compra atual antes de iniciar uma nova.',
+          nzTitle: 'Orçamento em Andamento',
+          nzContent: 'Você já tem um orçamento em aberto. Por favor, finalize o orçamento atual antes de iniciar um novo.',
           nzOnOk: () => this.router.navigate(['/dashboard/compras'])
         });
         return;

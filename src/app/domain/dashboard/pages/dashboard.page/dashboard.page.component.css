@@ -1,45 +1,78 @@
-/* Estilo base para os cards */
+.cards {
+  display: flex;
+  flex-wrap: wrap !important;
+  justify-content: space-around;
+  align-items: center;
+}
+.card-resumo-spin {
+  min-height: 80px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  flex-wrap: nowrap; 
+  min-height: 80px; 
+  min-width: 300px;
+}
+
 .card-resumo {
-  min-width: 80px; 
-  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex: 1;
 }
 
-/* Títulos dos cards */
 .card-label {
+  font-weight: 400;
   font-size: 1rem;
+  margin-bottom: 0.25rem;
 }
 
-/* Valores nos cards */
 .card-value {
-  font-size: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
 
-/* Título principal */
-.card-title {
-  font-size: 1.25rem;
+.card-icon {
+  font-size: 1.5rem;
+  color: #555;
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* impede que o ícone encolha e perca alinhamento */
 }
 
 /* Media query para telas pequenas */
 @media (max-width: 500px) {
-  .card-label {
-    font-size: 0.75rem; /* Reduz o tamanho da fonte do rótulo */
+  .card-group,
+  .card-resumo-spin {
+    margin-bottom: 30px;
   }
-  
-  .card-value {
-    font-size: 0.65rem; /* Reduz o tamanho da fonte do valor */
+}
+
+/* Media query para telas pequenas */
+@media (max-width: 800px) {
+  .card-group,
+  .card-resumo-spin {
+    margin-bottom: 30px;
   }
-  
-  .card-title {
-    font-size: 1rem; /* Reduz o título principal */
+}
+/* Media query para telas pequenas */
+@media (max-width: 1000px) {
+  .card-group,
+  .card-resumo-spin {
+    margin-bottom: 30px;
   }
-  
-  .card-resumo {
-    min-width: 70px; /* Reduz ligeiramente o tamanho dos cards */
-    min-height: 70px;
-    padding: 0.5rem !important;
-  }
-  
-  .cards {
-    gap: 0.5rem; /* Adiciona espaço entre os cards */
-  }
+}
+
+.btn-default{
+  border-color: #1890ff !important;
+  color: #1890ff;
 }

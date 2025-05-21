@@ -115,7 +115,7 @@ export class DashboardPageComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
     },
     {
-      name: 'Carrinho',
+      name: 'Categoria',
       sortOrder: null,
       sortFn: (a: ItemData, b: ItemData) => (a.cart || '').localeCompare(b.cart || ''),
       sortDirections: ['ascend', 'descend', null],
