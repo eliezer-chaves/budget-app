@@ -28,6 +28,10 @@ import { NzI18nService, pt_BR } from 'ng-zorro-antd/i18n';
 import { SearchItemData } from '@domain/dashboard/interfaces/searchItemData';
 import { NzSpinComponent } from 'ng-zorro-antd/spin';
 import { FirstNamePipe } from '@shared/pipes/firstName.pipe/firstName.pipe';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { PurchaseData } from '../../interfaces/PurchaseData';
+
 @Component({
   standalone: true,
   selector: 'app-dashboard.page',
@@ -51,7 +55,9 @@ import { FirstNamePipe } from '@shared/pipes/firstName.pipe/firstName.pipe';
     NzDividerModule,
     RouterModule,
     NzSpinComponent,
-    FirstNamePipe
+    FirstNamePipe,
+    NzBadgeModule,
+    NzRadioModule
   ],
 })
 export class DashboardPageComponent implements OnInit {
@@ -75,7 +81,6 @@ export class DashboardPageComponent implements OnInit {
   qtdCarrinhos = 1;
   carrinhosNames: string[] = [''];
   @ViewChildren('inputEl') inputElements!: QueryList<ElementRef>;
-
   totalGasto: number = 0
   comprasRealizadas: number = 0
   comprasEmAberto: number = 0
@@ -84,9 +89,12 @@ export class DashboardPageComponent implements OnInit {
   loadingTable = false;
   loadingSearchButton = false
   loadingCards = true
+  isVisiblePurchases = false
+  isVisibleNewPurchase = false
+
+
   ngOnInit() {
     this.loadData();
-    this.checkOpenPurchase();
   }
 
   async pesquisarItem() {
@@ -184,16 +192,6 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  async checkOpenPurchase() {
-    const dadosSalvos = localStorage.getItem('ultimaCompra');
-    if (dadosSalvos) {
-      const dadosCompra = JSON.parse(dadosSalvos);
-      if (dadosCompra.compraFinalizada === false) {
-        this.router.navigate(['/dashboard']);
-      }
-    }
-  }
-
   async logout() {
     this.LoadingService.startLoading();
     await this.auth.logoutService();
@@ -205,25 +203,18 @@ export class DashboardPageComponent implements OnInit {
     this.router.navigate(['/auth/reset-password']);
   }
 
-  showModal(): void {
-    const dadosSalvos = localStorage.getItem('ultimaCompra');
-    if (dadosSalvos) {
-      const dadosCompra = JSON.parse(dadosSalvos);
-      if (dadosCompra.compraFinalizada === false) {
-        this.modalService.info({
-          nzTitle: 'Orçamento em Andamento',
-          nzContent: 'Você já tem um orçamento em aberto. Por favor, finalize o orçamento atual antes de iniciar um novo.',
-          nzOnOk: () => this.router.navigate(['/dashboard/compras'])
-        });
-        return;
-      }
-    }
-    this.isVisible = true;
+  newPurchase(): void {
+    this.isVisibleNewPurchase = true
   }
 
-  handleCancel(): void {
-    this.isVisible = false;
+  handleCancelNewPurchase(): void {
+    this.isVisibleNewPurchase = false;
   }
+
+  openPurchases() {
+    this.router.navigate(['dashboard/orcamentos-abertos']);
+  }
+
   generateRandomId(): number {
     // Cria um array de 4 inteiros de 32 bits (128 bits no total)
     const randomValues = new Uint32Array(4);
@@ -239,12 +230,12 @@ export class DashboardPageComponent implements OnInit {
     return Math.abs(randomPart % Number.MAX_SAFE_INTEGER);
   }
 
-  async handleOk() {
-    
-   this.createPurchase()
+  async handleOkNewPurchase() {
+    this.createPurchase()
   }
 
-  async createPurchase(){
+ async createPurchase() {
+    this.isConfirmLoading = true;
     const userId = this.user()?.id;
 
     // Valida se campos críticos estão preenchidos
@@ -254,81 +245,86 @@ export class DashboardPageComponent implements OnInit {
       this.carrinhosNames.length === 0 ||
       this.carrinhosNames.some(name => !name.trim())
     ) {
-      this.notificationService.error('Informe os campos', 'Preencha todos os campos!  ')
+      this.notificationService.error('Informe os campos', 'Preencha todos os campos!');
       this.isConfirmLoading = false;
-      return; // Sai da função se a validação falhar
+      return;
     }
-    console.log(this.dataCompra)
-    console.log(this.mercadoNome)
-    console.log(this.carrinhosNames)
-    
-    // try {
-    //   // 1. Inserir a compra principal
-    //   const { data: purchaseData, error: purchaseError } = await this.supabase
-    //     .from('pur_purchase')
-    //     .insert([
-    //       {
-    //         pur_id: this.generateRandomId(),
-    //         pur_auth_id: userId,
-    //         pur_date: this.dataCompra,
-    //         pur_market_name: this.mercadoNome,
-    //         pur_carts_quantity: this.qtdCarrinhos,
-    //       }
-    //     ])
-    //     .select('pur_id');
 
-    //   if (purchaseError || !purchaseData?.[0]?.pur_id) {
-    //     throw purchaseError || new Error('Falha ao obter ID da compra');
-    //   }
+    try {
+      // 1. Inserir a compra principal no Supabase
+      const { data: purchaseData, error: purchaseError } = await this.supabase
+        .from('pur_purchase')
+        .insert([
+          {
+            pur_id: this.generateRandomId(),
+            pur_auth_id: userId,
+            pur_date: this.dataCompra,
+            pur_market_name: this.mercadoNome,
+            pur_carts_quantity: this.qtdCarrinhos,
+          }
+        ])
+        .select('pur_id');
 
-    //   const purchaseId = purchaseData[0].pur_id;
+      if (purchaseError || !purchaseData?.[0]?.pur_id) {
+        throw purchaseError || new Error('Falha ao obter ID da compra');
+      }
 
-    //   // 2. Inserir cada carrinho
-    //   const cartsIds = [];
-    //   for (const nomeCarrinho of this.carrinhosNames) {
-    //     const { data: cartData, error: cartError } = await this.supabase
-    //       .from('car_carts')
-    //       .insert([
-    //         {
-    //           car_name: nomeCarrinho,
-    //           car_purchase_id: purchaseId,
-    //           car_auth_id: userId,
-    //         }
-    //       ])
-    //       .select('car_id');
+      const purchaseId = purchaseData[0].pur_id;
 
-    //     if (cartError || !cartData?.[0]?.car_id) {
-    //       console.error(`Erro ao inserir carrinho ${nomeCarrinho}:`, cartError);
-    //       continue;
-    //     }
-    //     cartsIds.push(cartData[0].car_id);
-    //   }
+      // 2. Inserir cada carrinho no Supabase
+      const cartsIds = [];
+      for (const nomeCarrinho of this.carrinhosNames) {
+        const { data: cartData, error: cartError } = await this.supabase
+          .from('car_carts')
+          .insert([
+            {
+              car_name: nomeCarrinho,
+              car_purchase_id: purchaseId,
+              car_auth_id: userId,
+            }
+          ])
+          .select('car_id');
 
-    //   if (cartsIds.length === 0) {
-    //     throw new Error('Nenhum carrinho foi criado com sucesso');
-    //   }
+        if (cartError || !cartData?.[0]?.car_id) {
+          console.error(`Erro ao inserir carrinho ${nomeCarrinho}:`, cartError);
+          continue;
+        }
+        cartsIds.push(cartData[0].car_id);
+      }
 
-    //   // Salvar no localStorage
-    //   const navigationState = {
-    //     purchaseId: purchaseId,
-    //     cartsIds: cartsIds,
-    //     dataCompra: this.dataCompra,
-    //     mercado: this.mercadoNome,
-    //     qtdCarrinhos: this.qtdCarrinhos,
-    //     nomeCarrinhos: this.carrinhosNames,
-    //     compraFinalizada: false,
-    //     items: []
-    //   };
-    //   localStorage.setItem('ultimaCompra', JSON.stringify(navigationState));
-    //   this.router.navigate(['/dashboard/compras']);
+      if (cartsIds.length === 0) {
+        throw new Error('Nenhum carrinho foi criado com sucesso');
+      }
 
-    // } catch (error) {
-    //   console.error('Erro ao criar compra:', error);
-    //   this.message.error('Erro ao iniciar nova compra');
-    // } finally {
-    //   this.isConfirmLoading = false;
-    //   this.isVisible = false;
-    // }
+      // 3. Salvar apenas a compra atual no localStorage
+      const currentPurchase = {
+        purchaseId: purchaseId,
+        currentPurchase: true, // Flag para identificar a compra atual
+        dataCompra: this.dataCompra,
+        mercadoNome: this.mercadoNome
+      };
+
+      // Remove qualquer compra marcada como atual anteriormente
+      const existingPurchases = JSON.parse(localStorage.getItem('purchases') || '[]');
+      const updatedPurchases = existingPurchases.map((p: any) => ({
+        ...p,
+        currentPurchase: false
+      }));
+
+      // Adiciona a nova compra como atual
+      updatedPurchases.push(currentPurchase);
+      localStorage.setItem('purchases', JSON.stringify(updatedPurchases));
+
+      // 4. Navega para a página de compras
+      this.router.navigate(['/dashboard/compras']);
+
+    } catch (error) {
+      console.error('Erro ao criar compra:', error);
+      this.notificationService.error('Erro', 'Erro ao iniciar nova compra');
+    } finally {
+      this.isConfirmLoading = false;
+      this.isVisible = false;
+    }
   }
 
   trackByFn(index: number): number {
@@ -359,4 +355,13 @@ export class DashboardPageComponent implements OnInit {
   onChange(result: Date): void {
     // Implementação se necessário
   }
+
+  handleCancelPurchases() {
+    this.isVisiblePurchases = false
+  }
+  handleOkPurchasess() {
+
+  }
+
+
 }

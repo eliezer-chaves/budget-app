@@ -32,7 +32,7 @@ import { CartItem } from '@domain/dashboard/interfaces/CartItem';
 import { PurchaseData } from '@domain/dashboard/interfaces/PurchaseData';
 import { ColumnItem } from '@domain/dashboard/interfaces/ColumnItem';
 import { ItemData } from '@domain/dashboard/interfaces/ItemData';
- 
+
 
 @Component({
   standalone: true,
@@ -88,7 +88,7 @@ export class DashboardPageComponent implements OnInit {
   mostrarTabela: boolean = false
   // Cache para edição
   editCache: { [key: string]: { edit: boolean; data: ItemData } } = {};
-
+  currentPurchaseId: any
   listOfColumns: ColumnItem[] = [
     {
       name: 'Item',
@@ -137,53 +137,84 @@ export class DashboardPageComponent implements OnInit {
     }
   ];
 
-  ngOnInit(): void {
-    this.loadData();
-    this.carregarTotais();
+  listCategory: { nome: string, id: string }[] = [];
+  categoriaSelecionada: string = ''
 
+  async ngOnInit(): Promise<void> {
+    await this.loadData();       // 1. Carrega dados básicos e define currentPurchaseId
+    await this.carregarTotais(); // 2. Agora pode carregar totais com ID conhecido
+    await this.loadTable();      // 3. Carrega itens da tabela
   }
 
   carrinhosNames: string[] = []
   totaisPorCarrinho: { nome: string, total: number }[] = [];
   totalGeral: number = 0;
 
-  carregarTotais(): void {
-    const dadosSalvos = localStorage.getItem('ultimaCompra');
-    if (!dadosSalvos) {
-      this.totaisPorCarrinho = [];
-      this.totalGeral = 0;
-      return;
-    }
-
+  async carregarTotais(): Promise<void> {
     try {
-      const compra = JSON.parse(dadosSalvos);
-      const totais: { [key: string]: { nome: string, total: number } } = {};
-
-      let total = 0;
-
-      compra.items.forEach((item: any) => {
-        const cartId = item.itm_cart_id;
-        const cartName = item.cartName;
-        const valorItem = item.itm_total || 0;
-
-        if (!totais[cartId]) {
-          totais[cartId] = {
-            nome: cartName,
-            total: 0
-          };
+      // 1. Verificar se temos uma compra atual
+      if (!this.currentPurchaseId) {
+        const purchases = localStorage.getItem('purchases');
+        if (purchases) {
+          const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
+          this.currentPurchaseId = currentPurchase?.purchaseId;
         }
 
-        totais[cartId].total += valorItem;
-        total += valorItem;
-      });
+        if (!this.currentPurchaseId) {
+          this.totaisPorCarrinho = [];
+          this.totalGeral = 0;
+          return;
+        }
+      }
 
-      this.totaisPorCarrinho = Object.values(totais);
-      this.totalGeral = total;
+      // 2. Buscar todos os itens da compra atual com JOIN
+      const { data, error } = await this.supabase
+        .from('car_carts')
+        .select(`
+        car_id,
+        car_name,
+        itm_item(
+          itm_total
+        )
+      `)
+        .eq('car_purchase_id', this.currentPurchaseId);
+
+      if (error) throw error;
+
+      // 3. Calcular totais
+      const totais: { nome: string; total: number }[] = [];
+      let totalGeral = 0;
+
+      if (data && data.length > 0) {
+        this.mostrarTabela = true
+        data.forEach((cart: any) => {
+          let totalCarrinho = 0;
+
+          // Soma os itens de cada carrinho
+          if (cart.itm_item && cart.itm_item.length > 0) {
+            totalCarrinho = cart.itm_item.reduce(
+              (sum: number, item: any) => sum + (item.itm_total || 0), 0
+            );
+          }
+
+          totais.push({
+            nome: cart.car_name,
+            total: totalCarrinho
+          });
+
+          totalGeral += totalCarrinho;
+        });
+      }
+
+      // 4. Atualizar estado
+      this.totaisPorCarrinho = totais;
+      this.totalGeral = totalGeral;
 
     } catch (error) {
       console.error('Erro ao carregar totais:', error);
       this.totaisPorCarrinho = [];
       this.totalGeral = 0;
+      this.notificationService.error('Erro', 'Falha ao calcular totais');
     }
   }
 
@@ -291,70 +322,38 @@ export class DashboardPageComponent implements OnInit {
     return total
   }
 
-  async loadData(): Promise<void> {
-    this.carregarTotais()
-    if (this.countItems() > 0) {
-      this.mostrarTabela = true
-    } else {
-      this.mostrarTabela = false
-    }
+ async loadData(): Promise<void> {
+  try {
+    const user = this.auth.currentUser();
+    if (!user) return;
 
-    try {
-      this.loading = true;
-      const currentUser = await this.auth.loadUser();
-      const dadosSalvos = localStorage.getItem('ultimaCompra');
+    const purchases = localStorage.getItem('purchases');
+    if (!purchases) return;
 
-      if (!dadosSalvos) {
-        console.error('Nenhum dado encontrado no localStorage');
-        this.router.navigate(['dashboard']);
+    const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
+    if (!currentPurchase) return;
 
-        return;
-      }
+    this.currentPurchaseId = currentPurchase.purchaseId;
 
-      const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
+    const { data: purchaseDBData, error } = await this.supabase
+      .from('pur_purchase')
+      .select(`*, car_carts(*, itm_item(*))`)
+      .eq('pur_id', this.currentPurchaseId);
 
-      if (dadosCompra.compraFinalizada !== false) {
-        console.log('Não há compra em andamento. Redirecionando...');
-        this.router.navigate(['dashboard']);
-        return;
-      }
+    if (error) throw error;
+    if (!purchaseDBData) return;
 
-      this.nomeCarrinhos = dadosCompra.nomeCarrinhos || [];
-      this.cartsIds = dadosCompra.cartsIds || [];
-      this.mercado = dadosCompra.mercado || '';
-      this.purchaseId = dadosCompra.purchaseId;
-      this.dataSet = dadosCompra.items || [];
+    const purchaseData = purchaseDBData[0];
+    this.mercado = purchaseData.pur_market_name;
+    this.listCategory = purchaseData.car_carts.map((cart: any) => ({
+      nome: cart.car_name,
+      id: cart.car_id.toString()
+    }));
 
-      if (!this.purchaseId || !this.cartsIds.length) {
-        console.error('Dados incompletos no localStorage');
-        this.router.navigate(['dashboard']);
-        return;
-      }
-
-      this.tableItems = this.dataSet.map(item => ({
-        id: item.id,
-        name: item.itm_name,
-        value: item.itm_value,
-        quantity: item.itm_quantity,
-        total: item.itm_total,
-        cart: item.cartName
-      }));
-
-
-      this.updateEditCache();
-      this.updateCartFilters();
-
-      if (currentUser) {
-        this.user.set(currentUser);
-      }
-
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      this.message.error('Erro ao carregar dados do usuário');
-    } finally {
-      this.loading = false;
-    }
+  } catch (error) {
+    console.error('Erro no loadData:', error);
   }
+}
 
   getUniqueCarts(): string[] {
     const uniqueCarts = new Set<string>();
@@ -375,13 +374,13 @@ export class DashboardPageComponent implements OnInit {
       }));
     }
   }
-
+  //PEGA O ID DO CARRINHO SELECIONADO, FUNCIONA NA VERSAO ATUAL
   getCartIdSelecionado(): number | null {
-    if (!this.carrinhoSelecionado || !this.nomeCarrinhos || !this.cartsIds) {
+    if (!this.categoriaSelecionada || !this.nomeCarrinhos || !this.cartsIds) {
       return null;
     }
-    console.log(this.carrinhoSelecionado)
-    const index: number = this.nomeCarrinhos.indexOf(this.carrinhoSelecionado);
+
+    const index: number = this.nomeCarrinhos.indexOf(this.categoriaSelecionada);
     return index >= 0 ? this.cartsIds[index] : null;
   }
 
@@ -400,12 +399,43 @@ export class DashboardPageComponent implements OnInit {
     return Math.abs(randomPart % Number.MAX_SAFE_INTEGER);
   }
 
-  async createItem(): Promise<void> {
-    this.carregarTotais()
-    try {
-      const cartId: number | null = this.getCartIdSelecionado();
+  async loadTable() {
+    if (!this.currentPurchaseId) return;
 
-      if (!cartId || this.item == '' || this.valorUnidade == '') {
+    const { data: itm_item, error } = await this.supabase
+      .from('itm_item')
+      .select('*, car_carts!inner(*)')
+      .eq('car_carts.car_purchase_id', this.currentPurchaseId);
+
+    if (error) {
+      console.error('Erro ao carregar itens:', error);
+      return;
+    }
+
+    if (itm_item && itm_item.length > 0) {
+      this.tableItems = itm_item.map(item => ({
+        id: item.id,
+        name: item.itm_name,
+        value: item.itm_value,
+        quantity: item.itm_quantity,
+        total: item.itm_total,
+        cart: item.car_carts?.car_name
+      }));
+
+      this.mostrarTabela = true; // Garante que a tabela será mostrada
+      this.updateEditCache();
+      this.updateCartFilters();
+    } else {
+      this.mostrarTabela = false;
+      this.tableItems = [];
+    }
+  }
+
+  async createItem(): Promise<void> {
+    try {
+      this.LoadingService.startLoading()
+
+      if (!this.categoriaSelecionada || this.item == '' || this.valorUnidade == '') {
         this.notificationService.error('Erro', 'Preencha todos os campos!');
         return;
       }
@@ -414,45 +444,82 @@ export class DashboardPageComponent implements OnInit {
       const valorUnidade: number = parseFloat(cleanedValue);
       const valorTotal: number = valorUnidade * this.itemQtd;
 
-      const newItem: CartItem = {
-        id: this.generateRandomId(),
-        itm_auth_id: this.user()?.id,
-        itm_name: this.item,
-        itm_value: valorUnidade,
-        itm_quantity: this.itemQtd,
-        itm_total: valorTotal,
-        itm_cart_id: cartId.toString(),
-        cartName: this.getCartName(cartId.toString())
-      };
+      const { data, error } = await this.supabase
+        .from('itm_item')
+        .insert([
+          {
+            itm_name: this.item,
+            itm_value: valorUnidade,
+            itm_quantity: this.itemQtd,
+            itm_total: valorTotal,
+            itm_cart_id: this.categoriaSelecionada,
+            itm_auth_id: this.auth.currentUser()?.id,
+          },
+        ])
+        .select()
 
-      const dadosSalvos: string | null = localStorage.getItem('ultimaCompra');
-
-      if (dadosSalvos) {
-        const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-        dadosCompra.items = [...(dadosCompra.items || []), newItem];
-        localStorage.setItem('ultimaCompra', JSON.stringify(dadosCompra));
-
-        this.dataSet = dadosCompra.items;
-        this.tableItems = this.dataSet.map(item => ({
-          id: item.id,
-          name: item.itm_name,
-          value: item.itm_value,
-          quantity: item.itm_quantity,
-          total: item.itm_total,
-          cart: item.cartName
-        }));
-
-        this.updateEditCache(); // Atualiza o cache de edição
-        this.updateCartFilters();
-      }
-      this.loadData()
       this.notificationService.success('Item Adicionado', this.item);
       this.limparInputs();
+      this.loadTable()
+      this.carregarTotais()
+    } catch {
 
-    } catch (error) {
-      console.error('Erro:', error);
-      this.notificationService.error('Erro', 'Não foi possível adicionar o item');
+    } finally {
+      this.LoadingService.stopLoading()
+
     }
+
+    // try {
+    //   const cartId: number | null = this.getCartIdSelecionado();
+
+    //   if (!cartId || this.item == '' || this.valorUnidade == '') {
+    //     this.notificationService.error('Erro', 'Preencha todos os campos!');
+    //     return;
+    //   }
+
+    //   const cleanedValue: string = this.valorUnidade.replace(/[^\d.,-]/g, '').replace(',', '.');
+    //   const valorUnidade: number = parseFloat(cleanedValue);
+    //   const valorTotal: number = valorUnidade * this.itemQtd;
+
+    //   const newItem: CartItem = {
+    //     id: this.generateRandomId(),
+    //     itm_auth_id: this.user()?.id,
+    //     itm_name: this.item,
+    //     itm_value: valorUnidade,
+    //     itm_quantity: this.itemQtd,
+    //     itm_total: valorTotal,
+    //     itm_cart_id: cartId.toString(),
+    //     cartName: this.getCartName(cartId.toString())
+    //   };
+
+    //   const dadosSalvos: string | null = localStorage.getItem('ultimaCompra');
+
+    //   if (dadosSalvos) {
+    //     const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
+    //     dadosCompra.items = [...(dadosCompra.items || []), newItem];
+    //     localStorage.setItem('ultimaCompra', JSON.stringify(dadosCompra));
+
+    //     this.dataSet = dadosCompra.items;
+    //     this.tableItems = this.dataSet.map(item => ({
+    //       id: item.id,
+    //       name: item.itm_name,
+    //       value: item.itm_value,
+    //       quantity: item.itm_quantity,
+    //       total: item.itm_total,
+    //       cart: item.cartName
+    //     }));
+
+    //     this.updateEditCache(); // Atualiza o cache de edição
+    //     this.updateCartFilters();
+    //   }
+    //   this.loadData()
+    //   this.notificationService.success('Item Adicionado', this.item);
+    //   this.limparInputs();
+
+    // } catch (error) {
+    //   console.error('Erro:', error);
+    //   this.notificationService.error('Erro', 'Não foi possível adicionar o item');
+    // }
   }
 
   getCartName(cartId: string): string {
@@ -710,6 +777,7 @@ export class DashboardPageComponent implements OnInit {
     this.router.navigate(['dashboard'])
     this.LoadingService.stopLoading()
   }
+  
   constructor(private modal: NzModalService) { }
 
   showDeleteConfirm(): void {

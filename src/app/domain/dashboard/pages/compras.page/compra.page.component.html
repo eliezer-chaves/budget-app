@@ -20,9 +20,11 @@
     <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
         <div nz-col nzSpan="12">
             <nz-input-group nzAddOnBefore="Categoria">
-                <nz-select [(ngModel)]="carrinhoSelecionado" nzPlaceHolder="Selecione uma categoria" class="w-100"
+                <nz-select [(ngModel)]="categoriaSelecionada" nzPlaceHolder="Selecione uma categoria" class="w-100"
                     (ngModelChange)="limparInputs()">
-                    <nz-option *ngFor="let nome of nomeCarrinhos" [nzValue]="nome" [nzLabel]="nome"></nz-option>
+                    <nz-option *ngFor="let category of listCategory" [nzValue]="category.id" 
+                        [nzLabel]="category.nome"> 
+                    </nz-option>
                 </nz-select>
             </nz-input-group>
         </div>
@@ -83,7 +85,7 @@
                 Editar Orçamento</button>
         </div>
         <div>
-            <button nz-button nzType="primary" class="shadow btn-table btn-green" (click)="createItem()">
+            <button nz-button nzType="primary" class="shadow btn-table btn-green" [nzLoading]="LoadingService.loading()" (click)="createItem()">
                 <nz-icon nzType="plus" nzTheme="outline" />Adicionar Item</button>
         </div>
     </div>
@@ -125,13 +127,14 @@
 
             <button nz-button nzType="primary" nzSize="large" (click)="finalizarCompra()"
                 [nzLoading]="LoadingService.loading()" class="shadow mt-2 btn-table btn-green">
-                <nz-icon nzType="check-circle" nzTheme="outline" class="me-1" />
+                <nz-icon nzType="file-done" nzTheme="outline" class="me-1" />
                 Finalizar Orçamento
             </button>
         </div>
     </div>
 
     <div class="mt-4">
+        
         <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
             [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'">
             <thead>
@@ -281,10 +284,7 @@
             <nz-input-group [nzAddOnBefore]="'Categoria ' + (i + 1)">
                 <input type="text" nz-input [(ngModel)]="cart.nome" />
             </nz-input-group>
-
         </div>
-
-
     </ng-template>
 
     <ng-template #modalFooterCarrinhos>
