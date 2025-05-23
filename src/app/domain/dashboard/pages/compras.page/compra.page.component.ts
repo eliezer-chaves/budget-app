@@ -186,7 +186,7 @@ export class DashboardPageComponent implements OnInit {
       let totalGeral = 0;
 
       if (data && data.length > 0) {
-        this.mostrarTabela = true
+        // this.mostrarTabela = true
         data.forEach((cart: any) => {
           let totalCarrinho = 0;
 
@@ -218,55 +218,180 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  // Atualiza o cache de edição
   updateEditCache(): void {
     this.editCache = {};
+
     this.tableItems.forEach(item => {
-      this.editCache[item.id] = {
+      const itemId = String(item.id); // <-- conversão aqui
+      this.editCache[itemId] = {
         edit: false,
-        data: { ...item }
+        data: JSON.parse(JSON.stringify({
+          id: item.id, // ainda pode ser number aqui
+          name: item.name,
+          value: item.value || 0,
+          quantity: item.quantity || 1,
+          total: item.total || 0,
+          cart: item.cart || this.listCategory[0]?.nome || ''
+        }))
       };
     });
   }
 
-  // Inicia a edição de um item
-  startEdit(id: string): void {
-    this.editCache[id].edit = true;
-    this.limparInputs()
+  startEdit(id: number | string): void {
+    const key = String(id); // garante string como chave
+
+    Object.keys(this.editCache).forEach(k => {
+      if (this.editCache[k].edit && k !== key) {
+        this.cancelEdit(k);
+      }
+    });
+
+    if (this.editCache[key]) {
+      this.editCache[key].edit = true;
+    }
   }
 
+  // Cancela a edição - MELHORADO
   cancelEdit(id: string): void {
-    const index = this.tableItems.findIndex(item => item.id === id);
-    this.editCache[id] = {
-      data: { ...this.tableItems[index] },
-      edit: false
-    };
-    this.limparInputs()
+    const originalItem = this.tableItems.find(item => item.id === id);
+    if (originalItem && this.editCache[id]) {
+      this.editCache[id] = {
+        edit: false,
+        data: { ...originalItem } // Restaura os dados originais
+      };
+    }
+  }
+  updateItemTotal(itemId: string): void {
+    if (this.editCache[itemId] && this.editCache[itemId].data) {
+      const item = this.editCache[itemId].data;
+      const value = Number(item.value) || 0;
+      const quantity = Number(item.quantity) || 1;
+      item.total = value * quantity;
+    }
+  }
+  // Salva as alterações - PRINCIPAL MELHORIA
+  async saveEdit(id: string): Promise<void> {
+    try {
+      this.LoadingService.startLoading();
 
+      // Verifica se o item existe
+      const index = this.tableItems.findIndex(item => item.id === id);
+      if (index === -1 || !this.editCache[id]) {
+        this.notificationService.error('Erro', 'Item não encontrado');
+        return;
+      }
+      this.updateItemTotal(id);
+
+      const editedItem = this.editCache[id].data;
+
+      // Validações
+      if (!editedItem.name || editedItem.name.trim() === '') {
+        this.notificationService.error('Erro', 'O nome do item é obrigatório');
+        return;
+      }
+
+      if (!editedItem.cart || editedItem.cart.trim() === '') {
+        this.notificationService.error('Erro', 'Selecione uma categoria');
+        return;
+      }
+
+      const safeQuantity = Number(editedItem.quantity) || 1;
+      if (safeQuantity <= 0) {
+        this.notificationService.error('Erro', 'A quantidade deve ser maior que zero');
+        return;
+      }
+
+      // Formata o valor corretamente
+      let safeValue = 0;
+      if (editedItem.value !== null && editedItem.value !== undefined) {
+        const valueAsString = String(editedItem.value); // Converte para string garantidamente
+        safeValue = parseFloat(valueAsString.replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+      } else {
+        safeValue = 0;
+      }
+      if (safeValue <= 0) {
+        this.notificationService.error('Erro', 'O valor unitário deve ser maior que zero');
+        return;
+      }
+
+      const calculatedTotal = safeValue * safeQuantity;
+      const cartId = this.getCartIdByName(editedItem.cart);
+
+      if (!cartId) {
+        this.notificationService.error('Erro', 'Categoria inválida');
+        return;
+      }
+
+      // Atualiza no Supabase
+      const { error } = await this.supabase
+        .from('itm_item')
+        .update({
+          itm_name: editedItem.name.trim(),
+          itm_value: safeValue,
+          itm_quantity: safeQuantity,
+          itm_total: calculatedTotal,
+          itm_cart_id: cartId
+        })
+        .eq('itm_id', id);
+
+      if (error) throw error;
+
+      // Atualiza localmente
+      this.tableItems[index] = {
+        ...this.tableItems[index],
+        name: editedItem.name.trim(),
+        value: safeValue,
+        quantity: safeQuantity,
+        total: calculatedTotal,
+        cart: editedItem.cart
+      };
+
+      this.editCache[id].edit = false;
+
+      // Atualiza totais e filtros
+      await this.carregarTotais();
+      this.updateCartFilters();
+
+      this.notificationService.success('Sucesso', 'Item atualizado com sucesso');
+    } catch (error) {
+      console.error('Erro ao salvar edição:', error);
+      this.notificationService.error('Erro', 'Falha ao atualizar item');
+      this.cancelEdit(id);
+    } finally {
+      this.LoadingService.stopLoading();
+    }
   }
 
-  saveEdit(id: string): void {
-    const index = this.tableItems.findIndex(item => item.id === id);
-    Object.assign(this.tableItems[index], this.editCache[id].data);
+  // Exclui um item
+  async deleteItem(id: string): Promise<void> {
+    try {
+      this.LoadingService.startLoading();
 
-    this.tableItems[index].total = this.tableItems[index].value * this.tableItems[index].quantity;
+      // Remove do Supabase
+      const { error } = await this.supabase
+        .from('itm_item')
+        .delete()
+        .eq('itm_id', id);
 
-    this.updateLocalStorage();
+      if (error) throw error;
 
-    this.editCache[id].edit = false;
-    this.notificationService.success('Sucesso', 'Item atualizado com sucesso');
-    this.loadData()
+      // Remove localmente
+      const index = this.tableItems.findIndex(item => item.id === id);
+      if (index !== -1) {
+        this.tableItems.splice(index, 1);
+        delete this.editCache[id];
+      }
 
-  }
-
-  deleteItem(id: string): void {
-    const index = this.tableItems.findIndex(item => item.id === id);
-    if (index !== -1) {
-      this.tableItems.splice(index, 1);
-      this.updateLocalStorage();
-      this.loadData()
+      // Atualiza totais e filtros
+      await this.carregarTotais();
+      this.updateCartFilters();
 
       this.notificationService.success('Sucesso', 'Item removido com sucesso');
+    } catch (error) {
+      console.error('Erro ao excluir item:', error);
+      this.notificationService.error('Erro', 'Falha ao remover item');
+    } finally {
+      this.LoadingService.stopLoading();
     }
   }
 
@@ -292,15 +417,7 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  getCartIdByName(cartName: string): number | undefined {
-    const dadosSalvos = localStorage.getItem('ultimaCompra');
-    if (dadosSalvos) {
-      const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-      const index = dadosCompra.nomeCarrinhos.indexOf(cartName);
-      return index !== -1 ? dadosCompra.cartsIds[index] : undefined;
-    }
-    return undefined;
-  }
+
 
   countItems(): number {
     const dadosSalvos = JSON.parse(localStorage.getItem('ultimaCompra') || '{}');
@@ -322,38 +439,39 @@ export class DashboardPageComponent implements OnInit {
     return total
   }
 
- async loadData(): Promise<void> {
-  try {
-    const user = this.auth.currentUser();
-    if (!user) return;
+  async loadData(): Promise<void> {
 
-    const purchases = localStorage.getItem('purchases');
-    if (!purchases) return;
+    try {
+      const user = this.auth.currentUser();
+      if (!user) return;
 
-    const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
-    if (!currentPurchase) return;
+      const purchases = localStorage.getItem('purchases');
+      if (!purchases) return;
 
-    this.currentPurchaseId = currentPurchase.purchaseId;
+      const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
+      if (!currentPurchase) return;
 
-    const { data: purchaseDBData, error } = await this.supabase
-      .from('pur_purchase')
-      .select(`*, car_carts(*, itm_item(*))`)
-      .eq('pur_id', this.currentPurchaseId);
+      this.currentPurchaseId = currentPurchase.purchaseId;
 
-    if (error) throw error;
-    if (!purchaseDBData) return;
+      const { data: purchaseDBData, error } = await this.supabase
+        .from('pur_purchase')
+        .select(`*, car_carts(*, itm_item(*))`)
+        .eq('pur_id', this.currentPurchaseId);
 
-    const purchaseData = purchaseDBData[0];
-    this.mercado = purchaseData.pur_market_name;
-    this.listCategory = purchaseData.car_carts.map((cart: any) => ({
-      nome: cart.car_name,
-      id: cart.car_id.toString()
-    }));
+      if (error) throw error;
+      if (!purchaseDBData) return;
 
-  } catch (error) {
-    console.error('Erro no loadData:', error);
+      const purchaseData = purchaseDBData[0];
+      this.mercado = purchaseData.pur_market_name;
+      this.listCategory = purchaseData.car_carts.map((cart: any) => ({
+        nome: cart.car_name,
+        id: cart.car_id.toString()
+      }));
+
+    } catch (error) {
+      console.error('Erro no loadData:', error);
+    }
   }
-}
 
   getUniqueCarts(): string[] {
     const uniqueCarts = new Set<string>();
@@ -364,16 +482,34 @@ export class DashboardPageComponent implements OnInit {
     });
     return Array.from(uniqueCarts).sort();
   }
-
+  // Atualiza os filtros da coluna Categoria
   updateCartFilters(): void {
-    const cartColumn = this.listOfColumns.find(c => c.name === 'Carrinho');
-    if (cartColumn?.filterConfig) {
-      cartColumn.filterConfig.listOfFilter = this.getUniqueCarts().map(cart => ({
-        text: cart,
-        value: cart
-      }));
+    const cartColumnIndex = this.listOfColumns.findIndex(c => c.name === 'Categoria');
+    if (cartColumnIndex >= 0) {
+      // Usa as categorias da listCategory em vez dos itens da tabela
+      const uniqueCarts = this.listCategory.map(c => c.nome);
+      this.listOfColumns[cartColumnIndex] = {
+        ...this.listOfColumns[cartColumnIndex],
+        filterConfig: {
+          listOfFilter: uniqueCarts.map(cart => ({
+            text: cart,
+            value: cart
+          })),
+          filterFn: (list: string[], item: ItemData) =>
+            list.some(cart => item.cart?.includes(cart)),
+          filterMultiple: true
+        }
+      };
     }
   }
+
+  // Helper para obter ID do carrinho pelo nome
+  getCartIdByName(cartName: string): number | null {
+    const cart = this.listCategory.find(c => c.nome === cartName);
+    return cart ? parseInt(cart.id) : null;
+  }
+
+
   //PEGA O ID DO CARRINHO SELECIONADO, FUNCIONA NA VERSAO ATUAL
   getCartIdSelecionado(): number | null {
     if (!this.categoriaSelecionada || !this.nomeCarrinhos || !this.cartsIds) {
@@ -414,7 +550,7 @@ export class DashboardPageComponent implements OnInit {
 
     if (itm_item && itm_item.length > 0) {
       this.tableItems = itm_item.map(item => ({
-        id: item.id,
+        id: item.itm_id,
         name: item.itm_name,
         value: item.itm_value,
         quantity: item.itm_quantity,
@@ -422,13 +558,17 @@ export class DashboardPageComponent implements OnInit {
         cart: item.car_carts?.car_name
       }));
 
-      this.mostrarTabela = true; // Garante que a tabela será mostrada
+      this.mostrarTabela = true;
       this.updateEditCache();
-      this.updateCartFilters();
+      this.updateCartFilters(); // Atualiza os filtros após carregar os itens
     } else {
       this.mostrarTabela = false;
       this.tableItems = [];
+      this.updateCartFilters(); // Atualiza os filtros mesmo sem itens
     }
+  }
+  trackById(index: number, item: any): any {
+    return item.id;
   }
 
   async createItem(): Promise<void> {
@@ -581,85 +721,45 @@ export class DashboardPageComponent implements OnInit {
   }
 
   carts: { id: string; nome: string }[] = [];
+  //corrigida
 
   async updateCarrinhos() {
     this.LoadingService.startLoading();
 
-    const dadosSalvos = localStorage.getItem('ultimaCompra');
-    if (dadosSalvos) {
-      const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-
-      // Mapeia os novos nomes para referência rápida
-      const novosNomesMap: { [key: string]: string } = {};
-
-      for (let i = 0; i < this.carts.length; i++) {
-        const cartId = this.carts[i].id;
-        const novoNome = this.carts[i].nome;
-
-        // Atualiza o mapa de nomes
-        novosNomesMap[cartId] = novoNome;
-
-        // Atualiza no array nomeCarrinhos
-        dadosCompra.nomeCarrinhos[i] = novoNome;
-
-        // Atualiza no Supabase
-        const { error } = await this.supabase
+    try {
+      for (let i = 0; i < this.listCategory.length; i++) {
+        const { data, error } = await this.supabase
           .from('car_carts')
-          .update({ car_name: novoNome })
-          .eq('car_id', cartId);
-
-        if (error) {
-          console.error(`Erro ao atualizar carrinho ID ${cartId}:`, error);
-        }
+          .update({
+            car_name: this.listCategory[i].nome
+          })
+          .eq('car_id', this.listCategory[i].id)
+          .select()
       }
-
-      // Atualiza os nomes dos carrinhos nos itens da tabela
-      this.tableItems.forEach(item => {
-        const cartId = this.getCartIdByName(item.cart)?.toString();
-        if (cartId && novosNomesMap[cartId]) {
-          item.cart = novosNomesMap[cartId];
-        }
-      });
-
-      // Atualiza os itens no localStorage
-      dadosCompra.items = this.tableItems.map(item => ({
-        id: item.id,
-        itm_auth_id: this.user()?.id,
-        itm_name: item.name,
-        itm_value: item.value,
-        itm_quantity: item.quantity,
-        itm_total: item.total,
-        itm_cart_id: this.getCartIdByName(item.cart)?.toString() || '',
-        cartName: item.cart
-      }));
-
-      // Salva no localStorage
-      localStorage.setItem('ultimaCompra', JSON.stringify(dadosCompra));
-
+      this.loadData()
+      this.loadTable()
       // Atualiza os filtros da tabela
       this.updateCartFilters();
       // Atualiza o cache de edição
       this.updateEditCache();
       // Atualiza os totais
       this.carregarTotais();
-    }
-    this.loadData()
+      this.LoadingService.stopLoading();
+      this.notificationService.success('Carrinhos atualizados com sucesso!', '');
+      this.isVisibleCarrinho = false;
+    } catch {
+      this.notificationService.error('Não foi possivel alterar', '');
 
-    this.LoadingService.stopLoading();
-    this.notificationService.success('Carrinhos atualizados com sucesso!', '');
-    this.isVisibleCarrinho = false;
+    } finally {
+      this.isVisibleCarrinho = false;
+    }
   }
 
 
   async updateMercado() {
     this.LoadingService.startLoading()
 
-    const dadosSalvos = localStorage.getItem('ultimaCompra');
-    if (dadosSalvos) {
-      const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-      dadosCompra.mercado = this.mercado
-      dadosCompra.dataCompra = this.dataCompra
-      localStorage.setItem('ultimaCompra', JSON.stringify(dadosCompra));
+    try {
 
       const { data, error } = await this.supabase
         .from('pur_purchase')
@@ -667,12 +767,16 @@ export class DashboardPageComponent implements OnInit {
           pur_market_name: this.mercado,
           pur_date: this.dataCompra
         })
-        .eq('pur_id', dadosCompra.purchaseId)
-
+        .eq('pur_id', this.currentPurchaseId)
+      this.notificationService.success('Alteração Realizada', "")
+      this.LoadingService.stopLoading()
+      this.handleCancelMercado()
+    } catch {
+      this.notificationService.error('Não foi possível alterar', "")
+      this.LoadingService.stopLoading()
+    } finally {
+      this.LoadingService.stopLoading()
     }
-    this.LoadingService.stopLoading()
-    this.notificationService.success('Alteração Realizada', "")
-    this.handleCancelMercado()
   }
 
   onValorChangeTable(value: string): void {
@@ -723,48 +827,55 @@ export class DashboardPageComponent implements OnInit {
 
   async finalizarCompra() {
     try {
-      const dadosSalvos = localStorage.getItem('ultimaCompra');
-      if (!dadosSalvos) {
-        this.notificationService.error('Erro', 'Nenhuma compra encontrada');
-        return;
-      }
-
-      const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-
-      if (!dadosCompra.items || dadosCompra.items.length === 0) {
-        this.notificationService.warning('Aviso', 'Nenhum item para salvar');
-        return;
-      }
       this.LoadingService.startLoading()
-
-      for (let i = 0; i < dadosCompra.items.length; i++) {
-        const { data, error } = await this.supabase
-          .from('itm_item')
-          .insert([
-            {
-              itm_name: dadosCompra.items[i].itm_name,
-              itm_value: dadosCompra.items[i].itm_value,
-              itm_quantity: dadosCompra.items[i].itm_quantity,
-              itm_total: dadosCompra.items[i].itm_total,
-              itm_cart_id: dadosCompra.items[i].itm_cart_id,
-              itm_auth_id: this.user()?.id
-            },
-          ])
-      }
-
       const { data, error } = await this.supabase
         .from('pur_purchase')
         .update({ pur_state: true })
-        .eq('pur_id', dadosCompra.purchaseId)
-
+        .eq('pur_id', this.currentPurchaseId)
 
       this.notificationService.success('Sucesso', 'Compra salva com sucesso');
-      if (localStorage.getItem('ultimaCompra')) {
-        localStorage.removeItem('ultimaCompra');
-      }
       this.LoadingService.stopLoading()
-
       this.router.navigate(['/'])
+
+      // const dadosSalvos = localStorage.getItem('ultimaCompra');
+      // if (!dadosSalvos) {
+      //   this.notificationService.error('Erro', 'Nenhuma compra encontrada');
+      //   return;
+      // }
+
+      // const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
+
+      // if (!dadosCompra.items || dadosCompra.items.length === 0) {
+      //   this.notificationService.warning('Aviso', 'Nenhum item para salvar');
+      //   return;
+      // }
+
+      // for (let i = 0; i < dadosCompra.items.length; i++) {
+      //   const { data, error } = await this.supabase
+      //     .from('itm_item')
+      //     .insert([
+      //       {
+      //         itm_name: dadosCompra.items[i].itm_name,
+      //         itm_value: dadosCompra.items[i].itm_value,
+      //         itm_quantity: dadosCompra.items[i].itm_quantity,
+      //         itm_total: dadosCompra.items[i].itm_total,
+      //         itm_cart_id: dadosCompra.items[i].itm_cart_id,
+      //         itm_auth_id: this.user()?.id
+      //       },
+      //     ])
+      // }
+
+      // const { data, error } = await this.supabase
+      //   .from('pur_purchase')
+      //   .update({ pur_state: true })
+      //   .eq('pur_id', dadosCompra.purchaseId)
+
+
+      // this.notificationService.success('Sucesso', 'Compra salva com sucesso');
+      // if (localStorage.getItem('ultimaCompra')) {
+      //   localStorage.removeItem('ultimaCompra');
+      // }
+
 
     } catch (error) {
       console.error('Erro ao preparar dados:', error);
@@ -777,14 +888,14 @@ export class DashboardPageComponent implements OnInit {
     this.router.navigate(['dashboard'])
     this.LoadingService.stopLoading()
   }
-  
+
   constructor(private modal: NzModalService) { }
 
   showDeleteConfirm(): void {
     this.modal.confirm({
       nzTitle: '<i>Você tem certeza que quer cancelar essa compra?</i>',
       nzContent: '<b style="color: red;">Todos os itens dessa compra serão deletados e não será possível recuperá-los...</b>',
-      nzOkText: 'Cancelar Compra',
+      nzOkText: 'Cancelar Orçamento',
       nzOkType: 'primary',
       nzOkDanger: true,
       nzOnOk: () => this.cancelPurchase(),
@@ -793,14 +904,14 @@ export class DashboardPageComponent implements OnInit {
     });
   }
 
+  //CORRIGIDA
   async cancelPurchase() {
     this.LoadingService.startLoading()
     try {
-
       const { error } = await this.supabase
         .from('pur_purchase')
         .delete()
-        .eq('pur_id', this.purchaseId)
+        .eq('pur_id', this.currentPurchaseId)
       this.notificationService.success('Compra Cancelada', 'Sua compra foi cancelada com sucesso!')
       localStorage.removeItem('ultimaCompra');
       this.router.navigate(['dashboard'])
