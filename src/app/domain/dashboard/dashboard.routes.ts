@@ -16,6 +16,6 @@ export const DASHBOARD_ROUTES: Routes = [
     {
         path: 'orcamentos-abertos',
         loadComponent: () =>
-            import('./pages/open-purcases.page/open-purcases.page.component').then(m => m.OpenPurchases)
+            import('./pages/open-purcases.page/open-purcases.page.component').then(m => m.OpenPurchasesComponent)
     }
 ];

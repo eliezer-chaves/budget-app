@@ -1,0 +1,194 @@
+h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Resetando estilos duplicados e organizando responsividade para tabela NG-ZORRO */
+
+/* Estilo base */
+.container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+nz-table {
+  min-width: 300px;
+  font-size: 16px;
+}
+
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: middle;
+  padding: 12px 8px;
+}
+
+/* Cabeçalhos */
+.ant-table-thead > tr > th {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ant-table-thead > tr > th .ant-table-column-title {
+  font-size: 0.9em;
+}
+
+/* Corpo da tabela */
+.ant-table-tbody > tr > td {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+/* Elementos visuais auxiliares */
+.text-center {
+  text-align: center !important;
+}
+
+.d-flex.justify-content-around {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nz-tag {
+  font-size: 0.85em;
+  transform: scale(0.95);
+  transform-origin: left center;
+}
+
+nz-icon {
+  font-size: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+
+nz-spin {
+  display: block;
+  min-height: 200px;
+}
+
+.ant-btn-circle {
+  transform: scale(0.9);
+  transform-origin: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+}
+
+.ant-btn-circle i.anticon {
+  font-size: 16px;
+}
+
+/* Telas pequenas: até 380px */
+@media (max-width: 380px) {
+  nz-table {
+    font-size: 12px;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 10px;
+    padding: 6px 4px;
+  }
+
+  .ant-table-tbody > tr > td {
+    font-size: 11px;
+    padding: 6px 4px;
+  }
+
+  nz-tag {
+    font-size: 10px;
+    padding: 0 4px;
+  }
+
+  .ant-btn-circle {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+  }
+
+  .ant-btn-circle i.anticon {
+    font-size: 12px;
+  }
+
+  .d-flex.justify-content-around {
+    gap: 4px;
+  }
+
+  .hidden-mobile {
+    display: none;
+  }
+}
+
+/* Telas pequenas a médias: 381px - 900px */
+@media (min-width: 381px) and (max-width: 900px) {
+  nz-table {
+    font-size: 14px;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 11px;
+    padding: 7px 5px;
+  }
+
+  .ant-table-tbody > tr > td {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+
+  .ant-btn-circle {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+  }
+
+  .ant-btn-circle i.anticon {
+    font-size: 14px;
+  }
+}
+
+/* Telas desktop: acima de 900px */
+@media (min-width: 901px) {
+  nz-table {
+    font-size: 16px;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 12px;
+    padding: 8px 6px !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    font-size: 13px;
+    padding: 10px 8px;
+  }
+}
+@media (min-width: 701px) {
+  nz-table {
+    font-size: 16px;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 15px;
+    padding: 12px 10px;
+  }
+
+  .ant-table-tbody > tr > td {
+    font-size: 14px;
+    padding: 12px 10px;
+  }
+
+  nz-tag {
+    font-size: 1em;
+  }
+
+  nz-icon {
+    font-size: 1em;
+  }
+}

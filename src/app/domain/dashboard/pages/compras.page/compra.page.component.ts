@@ -89,6 +89,7 @@ export class DashboardPageComponent implements OnInit {
   // Cache para edição
   editCache: { [key: string]: { edit: boolean; data: ItemData } } = {};
   currentPurchaseId: any
+  
   listOfColumns: ColumnItem[] = [
     {
       name: 'Item',

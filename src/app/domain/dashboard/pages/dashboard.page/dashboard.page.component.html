@@ -10,14 +10,10 @@
   </button>
 
   <button nz-button nzType="default" (click)="openPurchases()" class="ms-3 btn-default">
-    <nz-icon nzType="folder-open" nzTheme="outline" />
-    <span>Orçamentos em Aberto</span>
-  </button>
-
-  <button nz-button nzType="default" class="ms-3 btn-default">
     <nz-icon nzType="file-search" nzTheme="outline" />
     <span>Histórico</span>
   </button>
+
 </div>
 </div>
 <div class="mt-4">
@@ -42,7 +38,7 @@
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
       <div class="p-3 card-group rounded bg-white shadow ">
         <div class="card-resumo">
-          <span class="card-label ">Orçamentos Realizados</span>
+          <span class="card-label ">Orçamentos Finalizados</span>
           <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompra">
             {{ comprasRealizadas }}
           </span>
