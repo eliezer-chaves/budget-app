@@ -1,24 +1,24 @@
-<div class="container mt-4 p-3 shadow bg-white rounded">
-  <h4 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h4>
+<div class="container mt-4 p-3 ">
+  <h3 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h3>
   <ng-template #loading>
     <p>Carregando dados do usuário...</p>
   </ng-template>
-  <div class="mt-3 ">
+<div class="d-flex mt-4">
+  <button nz-button nzType="primary" (click)="newPurchase()" class="btn-as-card">
+    <nz-icon nzType="file-add" nzTheme="outline" />
+    <span>Novo Orçamento</span>
+  </button>
 
-    <button nz-button nzType="primary" (click)="newPurchase()"> <nz-icon nzType="file-add" nzTheme="outline" />
-      Novo Orçamento
-    </button>
+  <button nz-button nzType="default" (click)="openPurchases()" class="ms-3 btn-default">
+    <nz-icon nzType="folder-open" nzTheme="outline" />
+    <span>Orçamentos em Aberto</span>
+  </button>
 
-    <button nz-button nzType="default" class="ms-2 btn-default" (click)="openPurchases()" >
-      <nz-icon nzType="folder-open" nzTheme="outline" />
-      Orçamentos em Aberto
-    </button>
-    <button nz-button nzType="default" class="ms-2 btn-default">
-      <nz-icon nzType="file-search" nzTheme="outline" />
-      Histórico de Orçamentos
-    </button>
-
-  </div>
+  <button nz-button nzType="default" class="ms-3 btn-default">
+    <nz-icon nzType="file-search" nzTheme="outline" />
+    <span>Histórico</span>
+  </button>
+</div>
 </div>
 <div class="mt-4">
   <div class="container cards">
@@ -70,7 +70,7 @@
 
     <!-- Templates Reutilizáveis -->
     <ng-template #loadingTemplate>
-      <div class="shadow p-3 card-resumo-spin rounded bg-white">
+      <div class="shadow p-3 card-resumo-spin rounded bg-white ">
         <nz-spin [nzSize]="'small'"></nz-spin>
       </div>
     </ng-template>

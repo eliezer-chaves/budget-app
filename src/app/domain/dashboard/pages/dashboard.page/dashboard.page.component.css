@@ -1,3 +1,8 @@
+h3 {
+  font-weight: 700;
+  font-family: sans-serif;
+}
+
 .cards {
   display: flex;
   flex-wrap: wrap !important;
@@ -88,4 +93,210 @@ nz-badge {
   background: #eee;
   display: inline-block;
   vertical-align: middle;
+}
+
+/* Botão Primário (Novo Orçamento) - Mantido o azul original */
+.btn-as-card {
+  height: 80px;
+  width: 200px;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  border: 1px solid #e6f7ff !important; /* Borda azul clara */
+  background-color: #1890ff !important; /* Azul original mantido */
+  color: white !important;
+}
+
+/* Botões Secundários (Novas cores) */
+.btn-default {
+  height: 80px;
+  width: 200px;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  background-color: white !important;
+  border: 1px solid #f0f0f0 !important;
+  color: #595959 !important; /* Cor de texto mais escura */
+}
+
+/* Cores específicas para cada botão secundário */
+button:nth-child(2).btn-default {
+  /* Orçamentos em Aberto */
+  border-color: #b7eb8f !important;
+  color: #389e0d !important;
+}
+
+button:nth-child(3).btn-default {
+  /* Histórico */
+  border-color: #ffd591 !important;
+  color: #d46b08 !important;
+}
+
+/* Efeitos Hover */
+.btn-as-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+  background-color: #40a9ff !important; /* Azul mais claro no hover */
+}
+
+.btn-default:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+button:nth-child(2).btn-default:hover {
+  /* Orçamentos em Aberto */
+  background-color: #f6ffed !important; /* Verde muito claro */
+}
+
+button:nth-child(3).btn-default:hover {
+  /* Histórico */
+  background-color: #fff7e6 !important; /* Laranja muito claro */
+}
+
+/* Ajustes de ícone e texto */
+.btn-as-card .anticon,
+.btn-default .anticon {
+  font-size: 20px !important; /* Ícones reduzidos */
+  margin-bottom: 6px !important;
+}
+
+.btn-as-card span,
+.btn-default span {
+  font-size: 1rem !important; /* Texto aumentado */
+  font-weight: 500 !important;
+}
+
+/* Ajuste geral dos cards para combinar com os botões */
+.card-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  flex-wrap: nowrap;
+  min-height: 80px;
+  min-width: 300px;
+  border-radius: 10px !important; /* Reduzido de 12px para 10px */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid #f0f0f0 !important;
+}
+
+/* Efeito hover para cards */
+.card-group:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Cores específicas para cada card */
+.card-group:nth-child(1) {
+  /* Total Gasto */
+  border-left: 4px solid #1890ff !important; /* Azul do botão primário */
+  /*background-color: #f6fbff !important; /* Azul muito claro */
+}
+
+.card-group:nth-child(2) {
+  /* Orçamentos Realizados */
+  border-left: 4px solid #389e0d !important; /* Verde do botão secundário */
+  /* background-color: #f6ffed !important; Verde muito claro */
+}
+
+.card-group:nth-child(3) {
+  /* Orçamentos em Aberto */
+  border-left: 4px solid #d46b08 !important; /* Laranja do botão secundário */
+  /*background-color: #fff7e6 !important;  Laranja muito claro */
+}
+
+/* Ajuste nos textos para melhor contraste */
+.card-group:nth-child(1) .card-label,
+.card-group:nth-child(1) .card-value {
+  color: #1890ff !important;
+}
+
+.card-group:nth-child(2) .card-label,
+.card-group:nth-child(2) .card-value {
+  color: #389e0d !important;
+}
+
+.card-group:nth-child(3) .card-label,
+.card-group:nth-child(3) .card-value {
+  color: #d46b08 !important;
+}
+
+/* Ícones com cores temáticas */
+.card-group:nth-child(1) .card-icon {
+  color: #1890ff !important;
+}
+
+.card-group:nth-child(2) .card-icon {
+  color: #389e0d !important;
+}
+
+.card-group:nth-child(3) .card-icon {
+  color: #d46b08 !important;
+}
+
+/* Ajuste no card de loading */
+.card-resumo-spin {
+  border-radius: 10px !important;
+  background-color: #fafafa !important;
+  border: 1px solid #f0f0f0 !important;
+  min-height: 80px;
+  min-width: 300px;
+}
+
+/* Mantendo os outros estilos existentes */
+.cards {
+  display: flex;
+  flex-wrap: wrap !important;
+  justify-content: space-around;
+  align-items: center;
+  gap: 16px; /* Espaçamento entre cards */
+}
+
+.card-resumo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.card-label {
+  font-weight: 500 !important; /* Mais negrito para combinar com botões */
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.card-value {
+  font-size: 1.2rem !important; /* Aumentado para maior destaque */
+  font-weight: 600 !important;
+}
+
+.card-icon {
+  font-size: 1.8rem !important; /* Ícones um pouco maiores */
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Media queries mantidas */
+@media (max-width: 1000px) {
+  .card-group,
+  .card-resumo-spin {
+    margin-bottom: 20px;
+    min-width: 100%;
+  }
 }
