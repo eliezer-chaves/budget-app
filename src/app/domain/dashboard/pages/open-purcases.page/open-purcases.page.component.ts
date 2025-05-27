@@ -132,13 +132,55 @@ export class OpenPurchasesComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
     },
   ];
+  loadingCards = true
+  totalGasto: number = 0
+  comprasRealizadas: number = 0
+  comprasEmAberto: number = 0
 
   ngOnInit() {
     this.loadPurchases();
   }
+  async contarComprasEmAberto() {
+    const { data, error } = await this.supabase
+      .rpc('contar_compras_pendentes');
+
+    if (error) {
+    } else {
+      this.comprasEmAberto = data
+    }
+  }
+
+  async contarCompras() {
+    const { data, error } = await this.supabase
+      .rpc('contar_compras_usuario');
+
+    if (error) {
+    } else {
+      this.comprasRealizadas = data
+    }
+  }
+
+  async loadTotalGasto() {
+    this.totalGasto = 0;
+
+    const { data, error } = await this.supabase
+      .rpc('get_user_item_total');
+
+    if (error) {
+      return 0;
+    } else {
+      this.totalGasto = data
+      this.loadingCards = false
+      return data;
+    }
+  }
+
 
   async loadPurchases() {
     this.LoadingService.startLoading();
+    this.loadTotalGasto()
+    this.contarCompras()
+    this.contarComprasEmAberto()
     try {
       const currentUser = await this.auth.loadUser();
       if (currentUser) {
@@ -246,7 +288,7 @@ export class OpenPurchasesComponent implements OnInit {
         .eq('pur_id', purchaseId)
       this.loadPurchases();
 
-        // Recupera o array do localStorage
+      // Recupera o array do localStorage
       const stored = localStorage.getItem('purchases');
       if (stored) {
         const compras = JSON.parse(stored);

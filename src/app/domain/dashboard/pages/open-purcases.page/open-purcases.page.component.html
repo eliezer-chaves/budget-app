@@ -1,19 +1,82 @@
 <div class="container mt-4">
     <h2>Últimos orçamentos realizados</h2>
 </div>
+<div class="container cards">
+    <!-- Card 1: Total Gasto -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+        <div class="p-3 card-group rounded bg-white shadow ">
+            <div class="card-resumo">
+                <span class="card-label">Total Gasto</span>
+                <span class="card-value mt-2" *ngIf="totalGasto > 0; else templateSemCompra">
+                    {{ totalGasto | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                </span>
+            </div>
+
+            <div class="card-icon">
+                <nz-icon nzType="shopping" nzTheme="outline"></nz-icon>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Card 2: Compras Realizadas -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+        <div class="p-3 card-group rounded bg-white shadow ">
+            <div class="card-resumo">
+                <span class="card-label ">Orçamentos Finalizados</span>
+                <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompraEmAberto">
+                    {{ comprasRealizadas }}
+                </span>
+            </div>
+            <div class="card-icon">
+                <nz-icon nzType="tags" nzTheme="outline" />
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Card 3: Compras em Aberto -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+        <div class="p-3 card-group rounded bg-white shadow ">
+            <div class="card-resumo">
+                <span class=" card-label">Orçamentos em Aberto</span>
+                <span class=" card-value mt-2 " *ngIf="comprasEmAberto > 0; else templateSemCompraEmAberto">
+                    {{ comprasEmAberto }}
+                </span>
+            </div>
+            <div class="card-icon">
+                <nz-icon nzType="tag" nzTheme="outline" />
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Templates Reutilizáveis -->
+    <ng-template #loadingTemplate>
+        <div class="shadow p-3 card-resumo-spin rounded bg-white ">
+            <nz-spin [nzSize]="'small'"></nz-spin>
+        </div>
+    </ng-template>
+
+    <ng-template #templateSemCompra>
+        <span class="text-start card-value mt-2">R$ 00,00</span>
+    </ng-template>
+
+    <ng-template #templateSemCompraEmAberto>
+        <span class="text-start card-value mt-2">0</span>
+    </ng-template>
+</div>
 <div class="mt-4 container p-3 bg-white rounded shadow">
-    <div class="d-flex justify-content-between mb-3 ">
-        <button nz-button nzType="primary">
-            <nz-icon nzType="file-add" nzTheme="outline" />
-            Novo Orçamento
-        </button>
-        <button nz-button nzType="primary">
-            <nz-icon nzType="file-add" nzTheme="outline" />
-            Novo Orçamento
-        </button>
-    </div>
+
     <div>
         <nz-spin nzTip="Carregando..." [nzSpinning]="LoadingService.loading()">
+            <div class="d-flex justify-content-between mb-3 ">
+                <button nz-button nzType="primary">
+                    <nz-icon nzType="file-add" nzTheme="outline" />
+                    Novo Orçamento
+                </button>
+                <button nz-button nzType="primary">
+                    <nz-icon nzType="file-add" nzTheme="outline" />
+                    Novo Orçamento
+                </button>
+            </div>
             <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
                 [nzPaginationPosition]="'bottom'" [nzLoading]="LoadingService.loading()">
                 <thead>
@@ -63,8 +126,8 @@
                                 (click)="openPruchase(purchase.id)">
                                 <nz-icon nzType="folder-open" nzTheme="outline" />
                             </button>
-                           
-                            <button nz-button nzType="primary" nzShape="circle" nzDanger 
+
+                            <button nz-button nzType="primary" nzShape="circle" nzDanger
                                 (click)=" showDeleteConfirm(purchase.id)" nzTooltipTitle="Remover">
                                 <nz-icon nzType="delete" nzTheme="outline" />
                             </button>
