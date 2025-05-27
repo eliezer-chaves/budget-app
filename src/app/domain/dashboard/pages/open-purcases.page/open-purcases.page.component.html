@@ -1,12 +1,12 @@
 <div class="container mt-4">
-    <h2>Últimos orçamentos realizados</h2>
+    <h2>Histórico de despesas</h2>
 </div>
 <div class="container cards">
     <!-- Card 1: Total Gasto -->
-    <ng-container *ngIf="!loadingCards; else loadingTemplate">
-        <div class="p-3 card-group rounded bg-white shadow ">
+    <ng-container *ngIf="!loadingCards; else loadingTemplate" class="">
+        <div class="p-3 card-group rounded bg-white shadow">
             <div class="card-resumo">
-                <span class="card-label">Total Gasto</span>
+                <span class="card-label">Gastos no período</span>
                 <span class="card-value mt-2" *ngIf="totalGasto > 0; else templateSemCompra">
                     {{ totalGasto | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
                 </span>
@@ -17,12 +17,26 @@
             </div>
         </div>
     </ng-container>
+    <!-- Card 4: Valor Total em Aberto -->
+    <ng-container *ngIf="!loadingCards; else loadingTemplate">
+        <div class="p-3 card-group rounded bg-white shadow">
+            <div class="card-resumo">
+                <span class="card-label">Total não pago</span>
+                <span class="card-value mt-2" *ngIf="totalAbertoMes > 0; else templateSemCompra">
+                    {{ totalAbertoMes | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                </span>
+            </div>
+            <div class="card-icon">
+                <nz-icon nzType="hourglass" nzTheme="outline"></nz-icon>
+            </div>
+        </div>
+    </ng-container>
 
     <!-- Card 2: Compras Realizadas -->
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
         <div class="p-3 card-group rounded bg-white shadow ">
             <div class="card-resumo">
-                <span class="card-label ">Orçamentos Finalizados</span>
+                <span class="card-label ">Orçamentos finalizados</span>
                 <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompraEmAberto">
                     {{ comprasRealizadas }}
                 </span>
@@ -37,7 +51,7 @@
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
         <div class="p-3 card-group rounded bg-white shadow ">
             <div class="card-resumo">
-                <span class=" card-label">Orçamentos em Aberto</span>
+                <span class=" card-label">Orçamentos em aberto</span>
                 <span class=" card-value mt-2 " *ngIf="comprasEmAberto > 0; else templateSemCompraEmAberto">
                     {{ comprasEmAberto }}
                 </span>
@@ -47,6 +61,8 @@
             </div>
         </div>
     </ng-container>
+
+
 
     <!-- Templates Reutilizáveis -->
     <ng-template #loadingTemplate>
@@ -66,19 +82,25 @@
 <div class="mt-4 container p-3 bg-white rounded shadow">
 
     <div>
-        <nz-spin nzTip="Carregando..." [nzSpinning]="LoadingService.loading()">
+        <nz-spin nzTip="Carregando..." class="bg-white" [nzSpinning]="LoadingService.loading()">
             <div class="d-flex justify-content-between mb-3 ">
-                <button nz-button nzType="primary">
-                    <nz-icon nzType="file-add" nzTheme="outline" />
-                    Novo Orçamento
-                </button>
+                <div>
+                    <nz-range-picker [(ngModel)]="periodo" [nzFormat]="dateFormat"
+                        (ngModelChange)="onChangeDatePicker($event)" class="text-center"></nz-range-picker>
+                    <button nz-button nzType="default" (click)="setCurrentMonthRange(); loadDataForSelectedPeriod()">
+                        <nz-icon nzType="calendar" nzTheme="outline"></nz-icon>
+                        Mês Atual
+                    </button>
+
+                </div>
+
                 <button nz-button nzType="primary">
                     <nz-icon nzType="file-add" nzTheme="outline" />
                     Novo Orçamento
                 </button>
             </div>
-            <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
-                [nzPaginationPosition]="'bottom'" [nzLoading]="LoadingService.loading()">
+            <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems"
+                [nzLoading]="LoadingService.loading()">
                 <thead>
                     <tr>
                         <th [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
@@ -117,21 +139,21 @@
                         <td class="text-center">{{ purchase.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
 
                         <td class="text-center">
-                            <nz-tag [nzColor]="purchase.state ? 'red' : 'green'" class="p-2">
-                                {{ purchase.state ? 'Finalizada' : 'Em aberto' }}
+                            <nz-tag [nzColor]="purchase.state ? 'red' : 'green'" >
+                                {{ purchase.state ? 'Pago' : 'Não Pago' }}
                             </nz-tag>
                         </td>
-                        <td class="text-center d-flex justify-content-around">
+                        <td class="edit-butons">
                             <button nz-button nzType="primary" nzShape="circle" nzTooltipTitle="Editar"
                                 (click)="openPruchase(purchase.id)">
-                                <nz-icon nzType="folder-open" nzTheme="outline" />
+                                <nz-icon nzType="folder-open" nzTheme="outline"></nz-icon>
                             </button>
-
                             <button nz-button nzType="primary" nzShape="circle" nzDanger
-                                (click)=" showDeleteConfirm(purchase.id)" nzTooltipTitle="Remover">
-                                <nz-icon nzType="delete" nzTheme="outline" />
+                                (click)="showDeleteConfirm(purchase.id)" nzTooltipTitle="Remover">
+                                <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
                             </button>
                         </td>
+
                     </tr>
                 </tbody>
             </nz-table>

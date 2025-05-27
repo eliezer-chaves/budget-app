@@ -164,6 +164,7 @@ export class DashboardPageComponent implements OnInit {
       this.currentPurchaseId = currentPurchase.purchaseId;
     }
 
+    console.log(this.currentPurchaseId)
 
     await this.loadData();       // 1. Carrega dados básicos e define currentPurchaseId
     await this.carregarTotais(); // 2. Agora pode carregar totais com ID conhecido
@@ -467,8 +468,6 @@ export class DashboardPageComponent implements OnInit {
   async loadData(): Promise<void> {
 
     try {
-
-
       const user = this.auth.currentUser();
       if (!user) return;
 
@@ -482,6 +481,15 @@ export class DashboardPageComponent implements OnInit {
       if (!purchaseDBData) return;
 
       const purchaseData = purchaseDBData[0];
+
+      const purchaseDateUtc = new Date(purchaseData.pur_date);
+      const purchaseDateLocal = new Date(
+        purchaseDateUtc.getUTCFullYear(),
+        purchaseDateUtc.getUTCMonth(),
+        purchaseDateUtc.getUTCDate()
+      );
+      this.dataCompra = purchaseDateLocal;
+
       this.mercado = purchaseData.pur_market_name;
       this.listCategory = purchaseData.car_carts.map((cart: any) => ({
         nome: cart.car_name,

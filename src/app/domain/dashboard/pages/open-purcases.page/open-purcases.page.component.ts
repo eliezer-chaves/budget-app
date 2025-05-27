@@ -112,8 +112,8 @@ export class OpenPurchasesComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterConfig: {
         listOfFilter: [
-          { text: 'Em aberto', value: false },
-          { text: 'Finalizada', value: true }
+          { text: 'Não Pago', value: false },
+          { text: 'Pago', value: true }
         ],
         filterFn: (list: boolean[], item: ItemData) => list.some(value => item.state === value),
         filterMultiple: true,
@@ -134,98 +134,19 @@ export class OpenPurchasesComponent implements OnInit {
   ];
   loadingCards = true
   totalGasto: number = 0
+  totalAbertoMes: number = 0
   comprasRealizadas: number = 0
   comprasEmAberto: number = 0
-
+  periodo: [Date, Date] = [new Date(), new Date()];
+  dateFormat = 'dd/MM/yyyy';
   ngOnInit() {
+    this.setCurrentMonthRange()
     this.loadPurchases();
-  }
-  async contarComprasEmAberto() {
-    const { data, error } = await this.supabase
-      .rpc('contar_compras_pendentes');
-
-    if (error) {
-    } else {
-      this.comprasEmAberto = data
-    }
-  }
-
-  async contarCompras() {
-    const { data, error } = await this.supabase
-      .rpc('contar_compras_usuario');
-
-    if (error) {
-    } else {
-      this.comprasRealizadas = data
-    }
-  }
-
-  async loadTotalGasto() {
-    this.totalGasto = 0;
-
-    const { data, error } = await this.supabase
-      .rpc('get_user_item_total');
-
-    if (error) {
-      return 0;
-    } else {
-      this.totalGasto = data
-      this.loadingCards = false
-      return data;
-    }
-  }
-
-
-  async loadPurchases() {
-    this.LoadingService.startLoading();
     this.loadTotalGasto()
+    this.loadTotalAberto()
     this.contarCompras()
     this.contarComprasEmAberto()
-    try {
-      const currentUser = await this.auth.loadUser();
-      if (currentUser) {
-        this.user.set(currentUser);
-
-        const { data: pur_purchase, error } = await this.supabase
-          .from('pur_purchase')
-          .select('*')
-          .eq('pur_auth_id', this.user()?.id)
-          .order('pur_date', { ascending: false });
-
-        if (error) throw error;
-
-        if (pur_purchase) {
-          // Cria um array de Promises para os totais
-          const purchasesWithTotals = await Promise.all(
-            pur_purchase.map(async (purchase) => {
-              const total = await this.countTotal(purchase.pur_id);
-              return {
-                id: purchase.pur_id,
-                date: new Date(purchase.pur_date),
-                purchaseName: purchase.pur_market_name,
-                state: purchase.pur_state,
-                total: total // Já resolvido
-              };
-            })
-          );
-
-          this.tableItems = purchasesWithTotals;
-
-          this.listCategory = pur_purchase.map(purchase => ({
-            nome: purchase.pur_market_name,
-            id: purchase.pur_id.toString()
-          }));
-        }
-      }
-    } catch (error) {
-      this.notificationService.error('Erro', 'Falha ao carregar as compras');
-      console.error('Error loading purchases:', error);
-    } finally {
-      this.LoadingService.stopLoading();
-    }
   }
-
-
 
   async countTotal(purchaseId: string) {
 
@@ -318,4 +239,178 @@ export class OpenPurchasesComponent implements OnInit {
       nzOnCancel: () => ''
     });
   }
+
+
+  onChangeDatePicker(dates: Date[] | null) {
+    if (dates && dates.length === 2) {
+      this.periodo = [dates[0], dates[1]]; // cria a tupla explicitamente
+      this.loadDataForSelectedPeriod();
+    }
+  }
+
+  setCurrentMonthRange() {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    this.periodo = [firstDay, lastDay];
+  }
+
+
+  // Cria um método que carrega TODOS os dados conforme o período selecionado
+  async loadDataForSelectedPeriod() {
+    if (!this.periodo || this.periodo.length !== 2) return;
+
+    this.LoadingService.startLoading();
+
+    try {
+      // Passa as datas do período
+      const [start, end] = this.periodo;
+
+      // Passa as datas para as funções que carregam dados, adaptando-as para receber o período:
+      await Promise.all([
+        this.loadTotalGasto(start, end),
+        this.contarCompras(start, end),
+        this.contarComprasEmAberto(start, end),
+        this.loadTotalAberto(start, end)
+      ]);
+
+      // Atualiza a tabela
+      await this.loadPurchases(start, end);
+
+    } catch (error) {
+      this.notificationService.error('Erro', 'Falha ao carregar os dados para o período selecionado');
+    } finally {
+      this.LoadingService.stopLoading();
+    }
+  }
+
+  // Adaptar os métodos para receber start e end como parâmetro:
+  async contarComprasEmAberto(data_inicio?: Date, data_fim?: Date) {
+    const start = data_inicio || this.periodo[0];
+    const end = data_fim || this.periodo[1];
+    const { data, error } = await this.supabase
+      .rpc('contar_compras_pendentes_mes', {
+        data_inicio: start.toISOString(),
+        data_fim: end.toISOString(),
+      });
+    if (error) {
+      console.error('Erro ao contar compras em aberto:', error.message);
+    } else {
+      this.comprasEmAberto = data;
+    }
+  }
+
+  async contarCompras(data_inicio?: Date, data_fim?: Date) {
+    const start = data_inicio || this.periodo[0];
+    const end = data_fim || this.periodo[1];
+    const { data, error } = await this.supabase
+      .rpc('contar_compras_usuario_mes', {
+        data_inicio: start.toISOString(),
+        data_fim: end.toISOString(),
+      });
+    if (error) {
+      console.error('Erro ao contar compras finalizadas:', error.message);
+    } else {
+      this.comprasRealizadas = data;
+    }
+  }
+
+  async loadTotalGasto(data_inicio?: Date, data_fim?: Date) {
+    const start = data_inicio || this.periodo[0];
+    const end = data_fim || this.periodo[1];
+
+    const { data, error } = await this.supabase
+      .rpc('get_user_item_total_mes', {
+        data_inicio: start.toISOString(),
+        data_fim: end.toISOString(),
+      });
+
+    if (error) {
+      console.error('Erro ao carregar total gasto:', error.message);
+      return 0;
+    } else {
+      this.totalGasto = data;
+      return data;
+    }
+  }
+
+  async loadTotalAberto(data_inicio?: Date, data_fim?: Date) {
+    const start = data_inicio || this.periodo[0];
+    const end = data_fim || this.periodo[1];
+
+    const { data, error } = await this.supabase
+      .rpc('get_user_item_total_mes_nao_gasto', {
+        data_inicio: start.toISOString(),
+        data_fim: end.toISOString(),
+      });
+
+    if (error) {
+      console.error('Erro ao carregar total em aberto:', error.message);
+      return 0;
+    } else {
+      this.totalAbertoMes = data;
+      return data;
+    }
+  }
+
+
+  async loadPurchases(data_inicio?: Date, data_fim?: Date) {
+    this.LoadingService.startLoading();
+    this.loadTotalGasto()
+    this.loadTotalAberto()
+    this.contarCompras()
+    this.contarComprasEmAberto()
+    try {
+      const currentUser = await this.auth.loadUser();
+      if (currentUser) {
+        this.user.set(currentUser);
+
+        const start = data_inicio || this.periodo[0];
+        const end = data_fim || this.periodo[1];
+
+        const { data: pur_purchase, error } = await this.supabase
+          .from('pur_purchase')
+          .select('*')
+          .eq('pur_auth_id', this.user()?.id)
+          .gte('pur_date', start.toISOString())
+          .lte('pur_date', end.toISOString())
+          .order('pur_date', { ascending: false });
+
+        if (error) throw error;
+
+        if (pur_purchase) {
+          const purchasesWithTotals = await Promise.all(
+            pur_purchase.map(async (purchase) => {
+              const total = await this.countTotal(purchase.pur_id);
+              return {
+                id: purchase.pur_id,
+                date: purchase.pur_date,
+                purchaseName: purchase.pur_market_name,
+                state: purchase.pur_state,
+                total: total
+              };
+            })
+          );
+
+          this.tableItems = purchasesWithTotals;
+
+          this.listCategory = pur_purchase.map(purchase => ({
+            nome: purchase.pur_market_name,
+            id: purchase.pur_id.toString()
+          }));
+        }
+      }
+      this.loadingCards = false;
+
+    } catch (error) {
+      this.notificationService.error('Erro', 'Falha ao carregar as compras');
+      console.error('Error loading purchases:', error);
+    } finally {
+      this.LoadingService.stopLoading();
+    }
+  }
+
+
+
 }

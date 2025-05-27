@@ -265,7 +265,7 @@ export class DashboardPageComponent implements OnInit {
           }
         ])
         .select('pur_id');
-
+        console.log(this.dataCompra)
       if (purchaseError || !purchaseData?.[0]?.pur_id) {
         throw purchaseError || new Error('Falha ao obter ID da compra');
       }

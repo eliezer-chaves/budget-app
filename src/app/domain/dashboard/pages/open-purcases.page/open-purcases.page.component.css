@@ -20,8 +20,9 @@
   flex-wrap: nowrap;
   min-height: 80px;
   min-width: 300px;
+  max-width: 300px;
+  max-height: 80px;
 }
-
 .card-resumo {
   display: flex;
   flex-direction: column;
@@ -29,18 +30,15 @@
   align-items: flex-start;
   flex: 1;
 }
-
 .card-label {
   font-weight: 400;
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
-
 .card-value {
   font-size: 1.1rem;
   font-weight: bold;
 }
-
 .card-icon {
   font-size: 1.5rem;
   color: #555;
@@ -51,11 +49,16 @@
   flex-shrink: 0; /* impede que o ícone encolha e perca alinhamento */
 }
 
+.edit-butons{
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+}
 /* Media query para telas pequenas */
 @media (max-width: 500px) {
   .card-group,
   .card-resumo-spin {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 }
 
@@ -63,14 +66,14 @@
 @media (max-width: 800px) {
   .card-group,
   .card-resumo-spin {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 }
 /* Media query para telas pequenas */
 @media (max-width: 1000px) {
   .card-group,
   .card-resumo-spin {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 }
 
@@ -83,16 +86,14 @@
   flex-wrap: nowrap;
   min-height: 80px;
   min-width: 300px;
-  border-radius: 10px !important; /* Reduzido de 12px para 10px */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  max-width: 300px;
+  max-height: 80px;
   transition: all 0.3s ease !important;
-  border: 1px solid #f0f0f0 !important;
 }
 
 /* Efeito hover para cards */
 .card-group:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Cores específicas para cada card */
@@ -143,13 +144,29 @@
   color: #d46b08 !important;
 }
 
+.card-group:nth-child(4) {
+  /* Total em Aberto */
+  border-left: 4px solid #722ed1 !important; /* Roxo vibrante */
+}
+
+.card-group:nth-child(4) .card-label,
+.card-group:nth-child(4) .card-value {
+  color: #722ed1 !important;
+}
+
+.card-group:nth-child(4) .card-icon {
+  color: #722ed1 !important;
+}
+
+
 /* Ajuste no card de loading */
 .card-resumo-spin {
   border-radius: 10px !important;
-  background-color: #fafafa !important;
   border: 1px solid #f0f0f0 !important;
   min-height: 80px;
   min-width: 300px;
+  max-width: 300px;
+  max-height: 80px;
 }
 
 /* Mantendo os outros estilos existentes */
@@ -158,7 +175,7 @@
   flex-wrap: wrap !important;
   justify-content: space-around;
   align-items: center;
-  gap: 16px; /* Espaçamento entre cards */
+  gap: 10px; /* Espaçamento entre cards */
 }
 
 .card-resumo {
@@ -206,11 +223,6 @@
 
 /* Ajustes para telas pequenas (até 600px) */
 @media (max-width: 600px) {
-  /* Container da tabela com scroll horizontal */
-  .ant-table-container {
-    display: block;
-    width: 100%;
-  }
 
  /* Faz a tabela caber em telas pequenas com rolagem horizontal */
   nz-table {
@@ -230,23 +242,11 @@
     margin-right: 0;
   }
 
-  /* Células da tabela */
-  .ant-table-tbody > tr > td,
-  .ant-table-thead > tr > th {
-    padding: 8px 4px;
-    font-size: 12px;
-  }
 
   /* Ajuste para tags de status */
-  nz-tag.p-2 {
-    padding: 2px 6px !important;
+  nz-tag {
     font-size: 11px;
-  }
-
-  /* Botões de ação na tabela */
-  .d-flex.justify-content-around {
-    justify-content: center;
-    gap: 8px;
+    padding: 2px;
   }
 
   /* Ícones nos botões */
@@ -256,6 +256,23 @@
   }
 
   .ant-btn-circle i.anticon {
-    font-size: 14px;
+    font-size: 28px;
   }
 }
+
+nz-range-picker {
+  flex: 1;
+  min-width: 250px;
+}
+
+@media (max-width: 768px) {
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  nz-range-picker {
+    width: 100%;
+  }
+}
+
