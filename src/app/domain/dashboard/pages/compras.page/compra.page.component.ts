@@ -89,7 +89,10 @@ export class DashboardPageComponent implements OnInit {
   // Cache para edição
   editCache: { [key: string]: { edit: boolean; data: ItemData } } = {};
   currentPurchaseId: any
-  
+  purchaseIdFromHistory: string = ''
+  isNewPurchase: boolean = false;
+
+
   listOfColumns: ColumnItem[] = [
     {
       name: 'Item',
@@ -142,9 +145,15 @@ export class DashboardPageComponent implements OnInit {
   categoriaSelecionada: string = ''
 
   async ngOnInit(): Promise<void> {
+    // 1. Verifica se veio do histórico
+    this.currentPurchaseId = history.state.purchaseId || null;
+
+    
+
     await this.loadData();       // 1. Carrega dados básicos e define currentPurchaseId
     await this.carregarTotais(); // 2. Agora pode carregar totais com ID conhecido
     await this.loadTable();      // 3. Carrega itens da tabela
+
   }
 
   carrinhosNames: string[] = []
@@ -443,16 +452,18 @@ export class DashboardPageComponent implements OnInit {
   async loadData(): Promise<void> {
 
     try {
+    
+
       const user = this.auth.currentUser();
       if (!user) return;
 
-      const purchases = localStorage.getItem('purchases');
-      if (!purchases) return;
+      // const purchases = localStorage.getItem('purchases');
+      // if (!purchases) return;
 
-      const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
-      if (!currentPurchase) return;
+      // const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
+      // if (!currentPurchase) return;
 
-      this.currentPurchaseId = currentPurchase.purchaseId;
+      // this.currentPurchaseId = currentPurchase.purchaseId;
 
       const { data: purchaseDBData, error } = await this.supabase
         .from('pur_purchase')

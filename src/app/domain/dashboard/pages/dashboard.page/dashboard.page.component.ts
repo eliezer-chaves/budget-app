@@ -235,7 +235,7 @@ export class DashboardPageComponent implements OnInit {
     this.createPurchase()
   }
 
- async createPurchase() {
+  async createPurchase() {
     this.isConfirmLoading = true;
     const userId = this.user()?.id;
 
@@ -316,8 +316,10 @@ export class DashboardPageComponent implements OnInit {
       updatedPurchases.push(currentPurchase);
       localStorage.setItem('purchases', JSON.stringify(updatedPurchases));
 
-      // 4. Navega para a página de compras
-      this.router.navigate(['/dashboard/compras']);
+      // Navega para a página de compras com o ID
+      this.router.navigate(['/dashboard/compras'], {
+        state: { purchaseId: purchaseId }
+      });
 
     } catch (error) {
       console.error('Erro ao criar compra:', error);

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { iUser } from '@domain/auth/interfaces/user.interface';
 import { AuthService } from '@domain/auth/services/auth.service';
 import { injectSupabase } from '@shared/functions/inject-supabase.function';
@@ -81,6 +82,7 @@ export class OpenPurchasesComponent implements OnInit {
   private message = inject(NzMessageService);
   private notificationService = inject(NzNotificationService);
   protected LoadingService = inject(LoadingService);
+  private router = inject(Router);
 
   user = signal<iUser | null>(null);
   tableItems: ItemData[] = [];
@@ -230,8 +232,12 @@ export class OpenPurchasesComponent implements OnInit {
   }
 
   openPruchase(purchaseId: string) {
-    console.log('Abrindo compra:', purchaseId);
+    //console.log('Abrindo compra:', purchaseId);
+    this.router.navigate(['/dashboard/compras'], {
+      state: { purchaseId: purchaseId }
+    });
   }
+
   async deletePurchase(purchaseId: string) {
     console.log('Deletando compra:', purchaseId);
     try {
