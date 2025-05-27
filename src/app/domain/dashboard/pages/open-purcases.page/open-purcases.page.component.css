@@ -4,8 +4,6 @@ h2 {
   font-style: normal;
 }
 
-/* Resetando estilos duplicados e organizando responsividade para tabela NG-ZORRO */
-
 /* Estilo base */
 .container {
   width: 100%;
@@ -24,7 +22,6 @@ nz-table {
   text-overflow: ellipsis;
   overflow: hidden;
   vertical-align: middle;
-  padding: 12px 8px;
 }
 
 /* Cabeçalhos */
@@ -45,45 +42,14 @@ nz-table {
   line-height: 1.3;
 }
 
-/* Elementos visuais auxiliares */
+/* Centralização de texto */
 .text-center {
   text-align: center !important;
-}
-
-.d-flex.justify-content-around {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-nz-tag {
-  font-size: 0.85em;
-  transform: scale(0.95);
-  transform-origin: left center;
-}
-
-nz-icon {
-  font-size: inherit;
-  display: inline-flex;
-  align-items: center;
 }
 
 nz-spin {
   display: block;
   min-height: 200px;
-}
-
-.ant-btn-circle {
-  transform: scale(0.9);
-  transform-origin: center;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-}
-
-.ant-btn-circle i.anticon {
-  font-size: 16px;
 }
 
 /* Telas pequenas: até 380px */
@@ -100,25 +66,6 @@ nz-spin {
   .ant-table-tbody > tr > td {
     font-size: 11px;
     padding: 6px 4px;
-  }
-
-  nz-tag {
-    font-size: 10px;
-    padding: 0 4px;
-  }
-
-  .ant-btn-circle {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-  }
-
-  .ant-btn-circle i.anticon {
-    font-size: 12px;
-  }
-
-  .d-flex.justify-content-around {
-    gap: 4px;
   }
 
   .hidden-mobile {
@@ -141,16 +88,6 @@ nz-spin {
     font-size: 12px;
     padding: 8px 6px;
   }
-
-  .ant-btn-circle {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-  }
-
-  .ant-btn-circle i.anticon {
-    font-size: 14px;
-  }
 }
 
 /* Telas desktop: acima de 900px */
@@ -169,6 +106,8 @@ nz-spin {
     padding: 10px 8px;
   }
 }
+
+/* Telas grandes: acima de 700px */
 @media (min-width: 701px) {
   nz-table {
     font-size: 16px;
@@ -183,12 +122,23 @@ nz-spin {
     font-size: 14px;
     padding: 12px 10px;
   }
+}
 
-  nz-tag {
-    font-size: 1em;
-  }
+/* Corrigindo alinhamento vertical */
+.ant-table-tbody > tr > td {
+  vertical-align: middle !important; /* Força alinhamento vertical central */
+}
 
-  nz-icon {
-    font-size: 1em;
-  }
+/* Ajuste específico para coluna de status */
+.ant-table-tbody > tr > td:nth-child(4) { /* Ajuste o número conforme a posição da coluna */
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Ajuste para coluna de ações */
+.ant-table-tbody > tr > td:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }

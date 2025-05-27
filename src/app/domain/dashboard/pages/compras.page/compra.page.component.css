@@ -1,3 +1,9 @@
+h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* Container ajustado para telas pequenas */
 @media (max-width: 768px) {
   .container {
@@ -24,13 +30,9 @@
 
   /* Ajusta os botões para caber melhor */
   .edit-button {
-    margin-top: 0.5rem;
     width: 100%;
   }
 
-  .save {
-    margin-bottom: 0.5rem;
-  }
 
   /* Tira margem de componentes com espaçamento inferior indesejado */
   .mb-3 {

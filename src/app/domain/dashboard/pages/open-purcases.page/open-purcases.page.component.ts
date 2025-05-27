@@ -14,7 +14,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
@@ -232,8 +232,34 @@ export class OpenPurchasesComponent implements OnInit {
   openPruchase(purchaseId: string) {
     console.log('Abrindo compra:', purchaseId);
   }
-  deletePurchase(purchaseId: string) {
+  async deletePurchase(purchaseId: string) {
     console.log('Deletando compra:', purchaseId);
+    try {
+      const { data, error } = await this.supabase
+        .from('pur_purchase')
+        .delete()
+        .eq('pur_id', purchaseId)
+      this.loadPurchases();
 
+    } catch (error) {
+      this.notificationService.error('Erro', 'Falha ao deletar a compra');
+    } finally {
+      this.loadPurchases();
+    }
+
+  }
+  constructor(private modal: NzModalService) { }
+
+  showDeleteConfirm(purchaseId: string): void {
+    this.modal.confirm({
+      nzTitle: '<i>Você tem certeza que quer excluir esse orçamento?</i>',
+      nzContent: '<b style="color: red;">Todos os itens desse orçamento serão deletados e não será possível recuperá-los...</b>',
+      nzOkText: 'Excluir Orçamento',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.deletePurchase(purchaseId),
+      nzCancelText: 'Voltar',
+      nzOnCancel: () => ''
+    });
   }
 }

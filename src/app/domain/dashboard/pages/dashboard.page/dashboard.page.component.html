@@ -1,5 +1,5 @@
 <div class="container mt-4 p-3 ">
-  <h3 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h3>
+  <h2 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h2>
   <ng-template #loading>
     <p>Carregando dados do usuário...</p>
   </ng-template>

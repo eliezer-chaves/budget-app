@@ -1,70 +1,77 @@
-<div class="container mt-4" >
-<h2>Últimos orçamentos realizados</h2>
+<div class="container mt-4">
+    <h2>Últimos orçamentos realizados</h2>
 </div>
 <div class="mt-4 container p-3 bg-white rounded shadow">
-    <nz-spin nzTip="Carregando..." [nzSpinning]="LoadingService.loading()">
-        <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
-            [nzPaginationPosition]="'bottom'" [nzLoading]="LoadingService.loading()" >
-            <thead>
-                <tr>
-                    <th [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
-                        [nzSortDirections]="listOfColumns[0].sortDirections" class="text-center">
-                        {{ listOfColumns[0].name }}
-                    </th>
+    <div class="d-flex justify-content-between mb-3 ">
+        <button nz-button nzType="primary">
+            <nz-icon nzType="file-add" nzTheme="outline" />
+            Novo Orçamento
+        </button>
+        <button nz-button nzType="primary">
+            <nz-icon nzType="file-add" nzTheme="outline" />
+            Novo Orçamento
+        </button>
+    </div>
+    <div>
+        <nz-spin nzTip="Carregando..." [nzSpinning]="LoadingService.loading()">
+            <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
+                [nzPaginationPosition]="'bottom'" [nzLoading]="LoadingService.loading()">
+                <thead>
+                    <tr>
+                        <th [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
+                            [nzSortDirections]="listOfColumns[0].sortDirections" class="text-center">
+                            {{ listOfColumns[0].name }}
+                        </th>
 
-                    <th [nzSortOrder]="listOfColumns[1].sortOrder" [nzSortFn]="listOfColumns[1].sortFn"
-                        [nzSortDirections]="listOfColumns[1].sortDirections" class="text-center">
-                        {{ listOfColumns[1].name }}
-                    </th>
-                    <th [nzSortOrder]="listOfColumns[4].sortOrder" [nzSortFn]="listOfColumns[4].sortFn"
-                        [nzSortDirections]="listOfColumns[4].sortDirections" class="text-center">
-                        {{ listOfColumns[4].name }}
-                    </th>
+                        <th [nzSortOrder]="listOfColumns[1].sortOrder" [nzSortFn]="listOfColumns[1].sortFn"
+                            [nzSortDirections]="listOfColumns[1].sortDirections" class="text-center">
+                            {{ listOfColumns[1].name }}
+                        </th>
+                        <th [nzSortOrder]="listOfColumns[4].sortOrder" [nzSortFn]="listOfColumns[4].sortFn"
+                            [nzSortDirections]="listOfColumns[4].sortDirections" class="text-center">
+                            {{ listOfColumns[4].name }}
+                        </th>
 
 
-                    <th [nzSortOrder]="listOfColumns[2].sortOrder" [nzSortFn]="listOfColumns[2].sortFn"
-                        [nzSortDirections]="listOfColumns[2].sortDirections"
-                        [nzFilterMultiple]="listOfColumns[2].filterConfig?.filterMultiple ?? false"
-                        [nzFilters]="listOfColumns[2].filterConfig?.listOfFilter ?? []"
-                        [nzFilterFn]="listOfColumns[2].filterConfig?.filterFn ?? null" class="text-center">
-                        {{ listOfColumns[2].name }}
-                    </th>
+                        <th [nzSortOrder]="listOfColumns[2].sortOrder" [nzSortFn]="listOfColumns[2].sortFn"
+                            [nzSortDirections]="listOfColumns[2].sortDirections"
+                            [nzFilterMultiple]="listOfColumns[2].filterConfig?.filterMultiple ?? false"
+                            [nzFilters]="listOfColumns[2].filterConfig?.listOfFilter ?? []"
+                            [nzFilterFn]="listOfColumns[2].filterConfig?.filterFn ?? null" class="text-center">
+                            {{ listOfColumns[2].name }}
+                        </th>
 
-                    <th [nzSortOrder]="listOfColumns[3].sortOrder" [nzSortFn]="listOfColumns[3].sortFn"
-                        [nzSortDirections]="listOfColumns[3].sortDirections" class="text-center">
-                        {{ listOfColumns[3].name }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let purchase of borderedTable.data" class="text-center">
-                    <td class="text-center">{{ purchase.date | date: 'dd/MMyyyy' }}</td>
-                    <td class="text-center">{{ purchase.purchaseName }}</td>
-                    <td class="text-center">{{ purchase.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+                        <th [nzSortOrder]="listOfColumns[3].sortOrder" [nzSortFn]="listOfColumns[3].sortFn"
+                            [nzSortDirections]="listOfColumns[3].sortDirections" class="text-center">
+                            {{ listOfColumns[3].name }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let purchase of borderedTable.data" class="text-center">
+                        <td class="text-center">{{ purchase.date | date: 'dd/MM/yyyy' }}</td>
+                        <td class="text-center">{{ purchase.purchaseName }}</td>
+                        <td class="text-center">{{ purchase.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
 
-                    <td class="text-center">
-                        <nz-tag [nzColor]="purchase.state ? 'red' : 'green'" class="p-2">
-                            {{ purchase.state ? 'Finalizada' : 'Em aberto' }}
-                        </nz-tag>
-                    </td>
-                    <td class="text-center d-flex justify-content-around">
-                        <button nz-button nzType="primary" nzShape="circle" nzTooltipTitle="Editar"
-                            (click)="openPruchase(purchase.id)">
-                            <nz-icon nzType="folder-open" nzTheme="outline" />
-                        </button>
-                        <!-- <button nz-button nzType="primary" nzShape="circle" nzDanger"
-                            class="ms-3">
-                            <i nz-icon nzType="delete" nzTheme="outline"></i>
-                        </button> -->
-                        <button nz-button nzType="primary" nzShape="circle" nzDanger nz-popconfirm
-                            nzPopconfirmTitle="Tem certeza que deseja remover este item? Essa ação não poderá ser desfeita!"
-                            (nzOnConfirm)="deletePurchase(purchase.id)" nzTooltipTitle="Remover">
-                            <nz-icon nzType="delete" nzTheme="outline" />
-
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </nz-table>
-    </nz-spin>
+                        <td class="text-center">
+                            <nz-tag [nzColor]="purchase.state ? 'red' : 'green'" class="p-2">
+                                {{ purchase.state ? 'Finalizada' : 'Em aberto' }}
+                            </nz-tag>
+                        </td>
+                        <td class="text-center d-flex justify-content-around">
+                            <button nz-button nzType="primary" nzShape="circle" nzTooltipTitle="Editar"
+                                (click)="openPruchase(purchase.id)">
+                                <nz-icon nzType="folder-open" nzTheme="outline" />
+                            </button>
+                           
+                            <button nz-button nzType="primary" nzShape="circle" nzDanger 
+                                (click)=" showDeleteConfirm(purchase.id)" nzTooltipTitle="Remover">
+                                <nz-icon nzType="delete" nzTheme="outline" />
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </nz-spin>
+    </div>
 </div>
