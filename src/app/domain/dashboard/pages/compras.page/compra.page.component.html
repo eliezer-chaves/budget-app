@@ -1,6 +1,6 @@
 <div class="container p-3 rounded shadow bg-white mt-3" id="form-add">
     <!-- Data e Mercado -->
-    <h3 class="text-center mb-4"><b>Adicionar Items</b></h3>
+    <h3 class="text-center mb-4"><b>Adicionar Itens</b></h3>
 
     <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
         <div nz-col nzSpan="12">
@@ -39,8 +39,7 @@
     <div nz-row nzGutter="16" nzJustify="start" nzAlign="middle">
         <div nz-col nzSpan="8">
             <nz-input-group nzAddOnBefore="Valor Unitário">
-                <input nz-input  [(ngModel)]="valorUnidade" (ngModelChange)="onValorChange($event)"
-                    class="w-100" />
+                <input nz-input [(ngModel)]="valorUnidade" (ngModelChange)="onValorChange($event)" class="w-100" />
             </nz-input-group>
         </div>
         <div nz-col nzSpan="8">
@@ -84,55 +83,44 @@
                 Editar Orçamento</button>
         </div>
         <div>
-            <button nz-button nzType="primary" class="shadow btn-table btn-green" 
-                (click)="createItem()">
+            <button nz-button nzType="primary" class="shadow btn-table btn-green" (click)="createItem()">
                 <nz-icon nzType="plus" nzTheme="outline" />Adicionar Item</button>
         </div>
     </div>
 </div>
 
 <div *ngIf="mostrarTabela" id="table" class="container shadow rounded bg-white mt-3 p-3" id="table-content">
-    <h5 class="text-center mb-3"><b>Dados da Compra</b></h5>
 
-    <div class="cards-container" id="cards-row">
-        <!-- Container dos cards (Total + Carrinhos) -->
+    <div class="card-container">
         <div class="cards-wrapper">
-            <div
-                class="card p-3 shadow total-card d-flex flex-direction-column align-items-center justify-content-center">
-                <div class="card-title text-center">
-                    <nz-icon nzType="shop" nzTheme="outline" />
-                    <b>Total</b>
+            <!-- Card Total -->
+            <div class=" total-card shadow">
+                <div class="card-content">
+                    <div class="card-label">Total</div>
+                    <div class="card-value">{{ totalGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
                 </div>
-                <div class="card-value text-center ">
-                    <b>{{ totalGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</b>
-                </div>
+                <nz-icon nzType="shop" nzTheme="outline" class="card-icon" />
             </div>
-            <div class="d-flex flex-wrap" style="gap: 20px;">
 
-                <div *ngFor="let carrinho of totaisPorCarrinho"
-                    class="card p-3 shadow carrinho-card  d-flex flex-direction-column align-items-center justify-content-center">
-                    <div class="card-title text-center">
-                        <nz-icon nzType="shopping-cart" nzTheme="outline" />
-                        <b>{{carrinho.nome}}</b>
-                    </div>
-                    <div class="card-value text-center">
-                        {{ carrinho.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-                    </div>
+            <!-- Cards de Carrinhos -->
+            <div *ngFor="let carrinho of totaisPorCarrinho" class="shadow carrinho-card">
+                <div class="card-content">
+                    <div class="card-label">{{carrinho.nome}}</div>
+                    <div class="card-value">{{ carrinho.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
                 </div>
+                <nz-icon nzType="shopping-cart" nzTheme="outline" class="card-icon" />
             </div>
         </div>
 
         <!-- Botão Finalizar Compra -->
-        <div class="button-wrapper">
-
+        <div class="finalizar-button">
             <button nz-button nzType="primary" nzSize="large" (click)="finalizarCompra()"
-                [nzLoading]="LoadingService.loading()" class="shadow mt-2 btn-table btn-green">
+                [nzLoading]="LoadingService.loading()" class="shadow btn-table btn-green">
                 <nz-icon nzType="file-done" nzTheme="outline" class="me-1" />
                 Finalizar Orçamento
             </button>
         </div>
     </div>
-
     <div class="mt-4">
 
         <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"

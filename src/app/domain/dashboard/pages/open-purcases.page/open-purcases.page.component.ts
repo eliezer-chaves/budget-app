@@ -29,6 +29,7 @@ import {
   NzTableSortOrder
 } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 interface ItemData {
   id: string;
@@ -73,7 +74,8 @@ interface ColumnItem {
     NzDividerModule,
     NzPopconfirmModule,
     NzGridModule,
-    NzSpinModule
+    NzSpinModule,
+    NzToolTipModule
   ]
 })
 export class OpenPurchasesComponent implements OnInit {
