@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { AuthService } from '@domain/auth/services/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Data, Router } from '@angular/router';
@@ -143,12 +143,27 @@ export class DashboardPageComponent implements OnInit {
 
   listCategory: { nome: string, id: string }[] = [];
   categoriaSelecionada: string = ''
+  isMobile = window.innerWidth < 770;
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.isMobile = event.target.innerWidth < 770;
+  }
+
+  
   async ngOnInit(): Promise<void> {
     // 1. Verifica se veio do histórico
     this.currentPurchaseId = history.state.purchaseId || null;
+    if (this.currentPurchaseId == null) {
+      const purchases = localStorage.getItem('purchases');
+      if (!purchases) return;
 
-    
+      const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
+      if (!currentPurchase) return;
+
+      this.currentPurchaseId = currentPurchase.purchaseId;
+    }
+
 
     await this.loadData();       // 1. Carrega dados básicos e define currentPurchaseId
     await this.carregarTotais(); // 2. Agora pode carregar totais com ID conhecido
@@ -452,18 +467,11 @@ export class DashboardPageComponent implements OnInit {
   async loadData(): Promise<void> {
 
     try {
-    
+
 
       const user = this.auth.currentUser();
       if (!user) return;
 
-      // const purchases = localStorage.getItem('purchases');
-      // if (!purchases) return;
-
-      // const currentPurchase = JSON.parse(purchases).find((p: any) => p.currentPurchase);
-      // if (!currentPurchase) return;
-
-      // this.currentPurchaseId = currentPurchase.purchaseId;
 
       const { data: purchaseDBData, error } = await this.supabase
         .from('pur_purchase')
