@@ -239,13 +239,21 @@ export class OpenPurchasesComponent implements OnInit {
   }
 
   async deletePurchase(purchaseId: string) {
-    console.log('Deletando compra:', purchaseId);
     try {
       const { data, error } = await this.supabase
         .from('pur_purchase')
         .delete()
         .eq('pur_id', purchaseId)
       this.loadPurchases();
+
+        // Recupera o array do localStorage
+      const stored = localStorage.getItem('purchases');
+      if (stored) {
+        const compras = JSON.parse(stored);
+        const atualizadas = compras.filter((item: any) => item.purchaseId !== purchaseId);
+        localStorage.setItem('purchases', JSON.stringify(atualizadas));
+      }
+
 
     } catch (error) {
       this.notificationService.error('Erro', 'Falha ao deletar a compra');

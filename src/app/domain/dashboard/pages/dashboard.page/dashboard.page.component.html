@@ -39,7 +39,7 @@
       <div class="p-3 card-group rounded bg-white shadow ">
         <div class="card-resumo">
           <span class="card-label ">Orçamentos Finalizados</span>
-          <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompra">
+          <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompraEmAberto">
             {{ comprasRealizadas }}
           </span>
         </div>
@@ -72,7 +72,7 @@
     </ng-template>
 
     <ng-template #templateSemCompra>
-      <span class="text-start card-value mt-2">Nenhum Orçamento</span>
+      <span class="text-start card-value mt-2">R$ 00,00</span>
     </ng-template>
 
     <ng-template #templateSemCompraEmAberto>

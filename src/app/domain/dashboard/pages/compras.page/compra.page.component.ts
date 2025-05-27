@@ -150,7 +150,7 @@ export class DashboardPageComponent implements OnInit {
     this.isMobile = event.target.innerWidth < 770;
   }
 
-  
+
   async ngOnInit(): Promise<void> {
     // 1. Verifica se veio do histórico
     this.currentPurchaseId = history.state.purchaseId || null;
@@ -924,7 +924,6 @@ export class DashboardPageComponent implements OnInit {
     });
   }
 
-  //CORRIGIDA
   async cancelPurchase() {
     this.LoadingService.startLoading()
     try {
@@ -933,8 +932,23 @@ export class DashboardPageComponent implements OnInit {
         .delete()
         .eq('pur_id', this.currentPurchaseId)
       this.notificationService.success('Compra Cancelada', 'Sua compra foi cancelada com sucesso!')
-      localStorage.removeItem('ultimaCompra');
+      //localStorage.removeItem('ultimaCompra');
+
+
+      // Recupera o array do localStorage
+      const stored = localStorage.getItem('purchases');
+      if (stored) {
+        const compras = JSON.parse(stored);
+        const atualizadas = compras.filter((item: any) => item.purchaseId !== this.currentPurchaseId);
+        localStorage.setItem('purchases', JSON.stringify(atualizadas));
+      }
+
+      //localStorage.removeItem('ultimaCompra');
+
       this.router.navigate(['dashboard'])
+
+
+
     }
     catch {
       this.notificationService.error('Erro', 'Não foi possível cancelar sua compra!')
