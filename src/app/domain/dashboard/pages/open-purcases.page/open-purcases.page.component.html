@@ -139,7 +139,7 @@
                         <td class="text-center">{{ purchase.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
 
                         <td class="text-center">
-                            <nz-tag [nzColor]="purchase.state ? 'red' : 'green'" >
+                            <nz-tag [nzColor]="purchase.state ? 'green' : 'red'" >
                                 {{ purchase.state ? 'Pago' : 'Não Pago' }}
                             </nz-tag>
                         </td>

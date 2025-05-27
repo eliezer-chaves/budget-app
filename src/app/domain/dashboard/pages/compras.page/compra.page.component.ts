@@ -164,7 +164,6 @@ export class DashboardPageComponent implements OnInit {
       this.currentPurchaseId = currentPurchase.purchaseId;
     }
 
-    console.log(this.currentPurchaseId)
 
     await this.loadData();       // 1. Carrega dados básicos e define currentPurchaseId
     await this.carregarTotais(); // 2. Agora pode carregar totais com ID conhecido
@@ -608,9 +607,16 @@ export class DashboardPageComponent implements OnInit {
         return;
       }
 
-      const cleanedValue: string = this.valorUnidade.replace(/[^\d.,-]/g, '').replace(',', '.');
-      const valorUnidade: number = parseFloat(cleanedValue);
-      const valorTotal: number = valorUnidade * this.itemQtd;
+      // Remove todos os caracteres não numéricos exceto vírgula e ponto
+      const cleanedValue = this.valorUnidade.replace(/[^\d,]/g, '');
+
+      // Substitui vírgula por ponto e remove pontos de milhar
+      const numericString = cleanedValue.replace('.', '').replace(',', '.');
+
+      const valorUnidade = parseFloat(numericString); // 1000.00
+      const valorTotal = valorUnidade * this.itemQtd;
+
+
 
       const { data, error } = await this.supabase
         .from('itm_item')
