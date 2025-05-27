@@ -139,11 +139,14 @@
                         <td class="text-center">{{ purchase.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
 
                         <td class="text-center">
-                            <nz-tag [nzColor]="purchase.state ? 'green' : 'red'" >
+                            <nz-tag [nzColor]="purchase.state ? 'green' : 'red'">
                                 {{ purchase.state ? 'Pago' : 'Não Pago' }}
                             </nz-tag>
                         </td>
                         <td class="edit-butons">
+                            <button nz-button nzType="primary"nzShape="circle" nzTooltipTitle="Finalizar Compra" class="btn-green" (click)="finishPurchase(purchase.id, purchase.state)">
+                                <nz-icon nzType="file-done" nzTheme="outline" />
+                            </button>
                             <button nz-button nzType="primary" nzShape="circle" nzTooltipTitle="Editar"
                                 (click)="openPruchase(purchase.id)">
                                 <nz-icon nzType="folder-open" nzTheme="outline"></nz-icon>

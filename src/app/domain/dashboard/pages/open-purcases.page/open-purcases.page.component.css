@@ -276,3 +276,7 @@ nz-range-picker {
   }
 }
 
+.btn-green {
+  background-color: #22c65e !important;
+  border-color: #22c65e !important;
+}

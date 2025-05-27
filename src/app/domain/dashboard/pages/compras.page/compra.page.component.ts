@@ -600,7 +600,6 @@ export class DashboardPageComponent implements OnInit {
 
   async createItem(): Promise<void> {
     try {
-      this.LoadingService.startLoading()
 
       if (!this.categoriaSelecionada || this.item == '' || this.valorUnidade == '') {
         this.notificationService.error('Erro', 'Preencha todos os campos!');
@@ -639,7 +638,6 @@ export class DashboardPageComponent implements OnInit {
     } catch {
 
     } finally {
-      this.LoadingService.stopLoading()
 
     }
 

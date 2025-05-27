@@ -411,6 +411,20 @@ export class OpenPurchasesComponent implements OnInit {
     }
   }
 
+  async finishPurchase(purchaseId: string, purchaseState: boolean) {
 
+    try {
+      const { data, error } = await this.supabase
+        .from('pur_purchase')
+        .update({ pur_state: !purchaseState })
+        .eq('pur_id', purchaseId)
+      this.loadPurchases();
+      this.notificationService.success("Sucesso", "Situação alterada.");
+    } catch {
+      this.notificationService.error("Erro!","Não foi possível alterar a situação do orçamento.")
+    }finally{
+      this.loadPurchases()
+    }
+  }
 
 }
