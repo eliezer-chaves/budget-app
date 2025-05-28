@@ -1,10 +1,10 @@
-<div class="container mt-4 p-3 ">
+<div class=" ">
   <h2 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h2>
   <ng-template #loading>
     <p>Carregando dados do usuário...</p>
   </ng-template>
-<div class="d-flex mt-4">
-  <button nz-button nzType="primary" (click)="newPurchase()" class="btn-as-card">
+<div class="d-flex flex-wrap mt-4">
+  <button nz-button nzType="primary" (click)="newPurchase()" class="btn-as-card ">
     <nz-icon nzType="file-add" nzTheme="outline" />
     <span>Novo Orçamento</span>
   </button>
@@ -17,7 +17,7 @@
 </div>
 </div>
 <div class="mt-4">
-  <div class="container cards">
+  <div class=" cards">
     <!-- Card 1: Total Gasto -->
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
       <div class="p-3 card-group rounded bg-white shadow ">
@@ -81,7 +81,7 @@
   </div>
 </div>
 
-<div class="container mt-4 bg-white p-3 shadow rounded">
+<div class=" mt-4 bg-white p-3 shadow rounded">
   <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="max-width: 300px;">
     <input type="text" nz-input placeholder="Informe algum item..." [(ngModel)]="termoPesquisa"
       (keyup.enter)="pesquisarItem()" />

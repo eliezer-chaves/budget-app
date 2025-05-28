@@ -1,0 +1,64 @@
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+  color: white;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+nz-header {
+  background: #001529;
+  padding: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 1001;
+}
+
+nz-content {
+  margin: 24px 16px 0;
+  overflow: initial;
+  margin-top: 64px;
+}
+
+.inner-content {
+  min-height: 360px;
+}
+
+nz-layout {
+  min-height: 100vh;
+}
+
+/* Estilos para o Sider como overlay */
+.sider-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100dvh;
+  width: 200px;
+  background-color: #001529;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+.sider-overlay.collapsed {
+  transform: translateX(-100%);
+}
+
+.sider-overlay:not(.collapsed) {
+  transform: translateX(0);
+}
