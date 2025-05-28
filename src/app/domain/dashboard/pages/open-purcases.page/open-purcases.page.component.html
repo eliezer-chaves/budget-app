@@ -1,4 +1,4 @@
-<div class="container mt-4">
+<div>
     <h2>Histórico de despesas</h2>
 </div>
 <div class="container cards p-3">
@@ -79,25 +79,25 @@
         <span class="text-start card-value mt-2">0</span>
     </ng-template>
 </div>
-<div class="mt-4 container p-3 bg-white rounded shadow">
+<div class=" container p-3 bg-white rounded shadow">
 
     <div>
         <nz-spin nzTip="Carregando..." class="bg-white" [nzSpinning]="LoadingService.loading()">
-            <div class="d-flex justify-content-between mb-3 ">
-                <div>
+            <div class="header-table mb-3 ">
+                <div class="header-table-date">
                     <nz-range-picker [(ngModel)]="periodo" [nzFormat]="dateFormat"
-                        (ngModelChange)="onChangeDatePicker($event)" class="text-center"></nz-range-picker>
-                    <button nz-button nzType="default" (click)="setCurrentMonthRange(); loadDataForSelectedPeriod()">
+                        (ngModelChange)="onChangeDatePicker($event)" class="text-center header-table-date-picker"></nz-range-picker>
+                    <button nz-button nzType="default" (click)="setCurrentMonthRange(); loadDataForSelectedPeriod()" class="header-table-date-button">
                         <nz-icon nzType="calendar" nzTheme="outline"></nz-icon>
                         Mês Atual
                     </button>
 
                 </div>
-
-                <button nz-button nzType="primary">
+                <button nz-button nzType="primary" (click)="abrirModalNewPurchase()" class="header-table-button">
                     <nz-icon nzType="file-add" nzTheme="outline" />
-                    Novo Orçamento
+                    <span>Novo Orçamento</span>
                 </button>
+                
             </div>
             <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems"
                 [nzLoading]="LoadingService.loading()">
@@ -154,7 +154,7 @@
                                 <button nz-button nzType="primary" nzShape="circle" nzTooltipTitle="Editar"
                                     (click)="openPruchase(purchase.id)">
                                     <nz-icon nzType="folder-open" nzTheme="outline"></nz-icon>
-                               </button>
+                                </button>
                             </span>
                             <span nz-tooltip nzTooltipTitle="Excluir Compra">
                                 <button nz-button nzType="primary" nzShape="circle" nzDanger
@@ -169,3 +169,8 @@
         </nz-spin>
     </div>
 </div>
+
+
+
+<app-modal-add-purchase *ngIf="isVisibleComponentNewPurchase"
+    (close)="isVisibleComponentNewPurchase = false"></app-modal-add-purchase>

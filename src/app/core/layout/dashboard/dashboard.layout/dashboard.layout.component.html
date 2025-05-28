@@ -1,27 +1,25 @@
 <nz-layout>
-  <nz-header class="shadow">
-    <nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" (click)="toggleSider()" />
-  </nz-header>
+ <nz-header class="shadow">
+  <div class="header-left">
+    <nz-icon #trigger class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" (click)="toggleSider()" />
+  </div>
+  <div class="header-center">
+    <h2>Gestor de Gastos</h2>
+  </div>
+  <div class="header-right"></div> <!-- placeholder para simetria -->
+</nz-header>
+
   <nz-layout>
-    <nz-sider [nzWidth]="200" [nzTrigger]="null" class="sider-overlay shadow" [ngClass]="{ 'collapsed': isCollapsed }">
+    <nz-sider #sider  [nzWidth]="200" [nzTrigger]="null" class="sider-overlay shadow" [ngClass]="{ 'collapsed': isCollapsed }">
       <div class="logo"></div>
       <ul nz-menu nzTheme="dark" nzMode="inline">
-        <li nz-submenu nzTitle="User" nzIcon="user">
-          <ul>
-            <li nz-menu-item>Tom</li>
-            <li nz-menu-item>Bill</li>
-            <li nz-menu-item>Alex</li>
-          </ul>
+        <li nz-menu-item (click)="goToHome()">
+          <nz-icon nzType="home" nzTheme="outline" />
+          <span>Dashboard</span>
         </li>
-        <li nz-submenu nzTitle="Team" nzIcon="team">
-          <ul>
-            <li nz-menu-item>Team 1</li>
-            <li nz-menu-item>Team 2</li>
-          </ul>
-        </li>
-        <li nz-menu-item>
-          <nz-icon nzType="file" />
-          <span>File</span>
+        <li nz-menu-item (click)="openPurchases()">
+          <nz-icon nzType="file-search" nzTheme="outline" />
+          <span>Histórico</span>
         </li>
       </ul>
     </nz-sider>

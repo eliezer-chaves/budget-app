@@ -1,0 +1,37 @@
+<nz-modal [nzVisible]="true" (nzOnCancel)="closeModal()" (nzOnOk)="closeModal()"
+ [nzTitle]="modalTitle" [nzContent]="modalContent"
+  [nzFooter]="modalFooter" >
+  <ng-template #modalTitle>Novo Orçamento</ng-template>
+
+  <ng-template #modalContent>
+
+    <nz-input-group nzAddOnBefore="Data da Compra" class="w-100">
+      <nz-date-picker [(ngModel)]="dataCompra" class="w-100" (ngModelChange)="onChange($event)"
+        nzFormat="dd/MM/yyyy"></nz-date-picker>
+    </nz-input-group>
+
+    <nz-form-control [nzErrorTip]="'O nome do Orçamento é obrigatório'">
+      <nz-input-group nzAddOnBefore="Local" class="mt-2 ">
+        <input type="text" nz-input placeholder="Ex: Supermercado" [(ngModel)]="mercadoNome" name="mercadoNome" required
+          #mercadoInput="ngModel" />
+      </nz-input-group>
+    </nz-form-control>
+
+    <nz-input-group nzAddOnBefore="Quantidade de Categorias" class="mt-2">
+      <nz-input-number [(ngModel)]="qtdCarrinhos" nzMin="1" class="w-100" (ngModelChange)="onQtdCarrinhosChange($event)"
+        value=1 />
+    </nz-input-group>
+
+    <div *ngFor="let name of carrinhosNames; let i = index; trackBy: trackByFn">
+      <nz-input-group [nzAddOnBefore]="'Categoria'" class="mt-2">
+        <input #inputEl type="text" nz-input placeholder="Ex: Alimentação" [(ngModel)]="carrinhosNames[i]"
+          (keydown)="onKeyDown($event, i)" />
+      </nz-input-group>
+    </div>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="closeModal()">Cancelar</button>
+    <button nz-button nzType="primary" (click)="handleOkNewPurchase()" [nzLoading]="isConfirmLoading">Avançar</button>
+  </ng-template>
+</nz-modal>

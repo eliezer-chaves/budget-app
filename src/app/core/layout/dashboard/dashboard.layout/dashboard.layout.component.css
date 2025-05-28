@@ -18,14 +18,39 @@
   display: inline-block;
   vertical-align: middle;
 }
-
 nz-header {
   background: #001529;
   padding: 0;
   position: fixed;
   width: 100%;
+  height: 64px;
   z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.header-left,
+.header-right {
+  width: 64px; /* mesmo tamanho para manter simetria */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-center {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-center h2 {
+  color: white;
+  margin: 0;
+  
+}
+
 
 nz-content {
   margin: 24px 16px 0;

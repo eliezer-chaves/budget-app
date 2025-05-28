@@ -915,11 +915,11 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  voltar() {
-    this.LoadingService.startLoading()
-    this.router.navigate(['dashboard'])
-    this.LoadingService.stopLoading()
-  }
+  // voltar() {
+  //   this.LoadingService.startLoading()
+  //   this.router.navigate(['dashboard'])
+  //   this.LoadingService.stopLoading()
+  // }
 
   constructor(private modal: NzModalService) { }
 

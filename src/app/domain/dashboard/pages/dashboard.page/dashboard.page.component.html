@@ -1,20 +1,24 @@
-<div class=" ">
+<div>
   <h2 *ngIf="user(); else loading">Bem-vindo(a) {{user()?.full_name | firstName}}</h2>
   <ng-template #loading>
     <p>Carregando dados do usuário...</p>
   </ng-template>
-<div class="d-flex flex-wrap mt-4">
-  <button nz-button nzType="primary" (click)="newPurchase()" class="btn-as-card ">
+  <div class="d-flex flex-wrap mt-4">
+    <!-- <button nz-button nzType="primary" (click)="newPurchase()" class="btn-as-card ">
     <nz-icon nzType="file-add" nzTheme="outline" />
     <span>Novo Orçamento</span>
-  </button>
+  </button> -->
+    <button nz-button nzType="primary" (click)="abrirModalNewPurchase()" class="btn-as-card ">
+      <nz-icon nzType="file-add" nzTheme="outline" />
+      <span>Novo Orçamento</span>
+    </button>
 
-  <button nz-button nzType="default" (click)="openPurchases()" class="ms-3 btn-default">
-    <nz-icon nzType="file-search" nzTheme="outline" />
-    <span>Histórico</span>
-  </button>
+    <button nz-button nzType="default" (click)="openPurchases()" class="ms-3 btn-default">
+      <nz-icon nzType="file-search" nzTheme="outline" />
+      <span>Histórico</span>
+    </button>
 
-</div>
+  </div>
 </div>
 <div class="mt-4">
   <div class=" cards">
@@ -121,7 +125,7 @@
   </div>
 </div>
 
-<!--Modal-->
+<!--Modal
 <nz-modal [(nzVisible)]="isVisibleNewPurchase" [nzTitle]="modalTitle" [nzContent]="modalContent"
   [nzFooter]="modalFooter" (nzOnCancel)="handleCancelNewPurchase()">
   <ng-template #modalTitle>Novo Orçamento</ng-template>
@@ -157,7 +161,9 @@
     <button nz-button nzType="default" (click)="handleCancelNewPurchase()">Cancelar</button>
     <button nz-button nzType="primary" (click)="handleOkNewPurchase()" [nzLoading]="isConfirmLoading">Avançar</button>
   </ng-template>
-</nz-modal>
+</nz-modal>-->
 
 
 
+<app-modal-add-purchase *ngIf="isVisibleComponentNewPurchase"
+  (close)="isVisibleComponentNewPurchase = false"></app-modal-add-purchase>

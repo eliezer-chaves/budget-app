@@ -32,6 +32,8 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { PurchaseData } from '../../interfaces/PurchaseData';
 import { NzTimelineModule } from 'ng-zorro-antd/timeline';
+import { ModalAddPurchaseComponent } from "../../components/modal-add-purchase/modal-add-purchase.component";
+
 @Component({
   standalone: true,
   selector: 'app-dashboard.page',
@@ -58,7 +60,8 @@ import { NzTimelineModule } from 'ng-zorro-antd/timeline';
     FirstNamePipe,
     NzBadgeModule,
     NzRadioModule,
-    NzTimelineModule
+    NzTimelineModule,
+    ModalAddPurchaseComponent
   ],
 })
 export class DashboardPageComponent implements OnInit {
@@ -365,5 +368,9 @@ export class DashboardPageComponent implements OnInit {
 
   }
 
-
+  isVisibleComponentNewPurchase = false
+  
+  abrirModalNewPurchase() {
+    this.isVisibleComponentNewPurchase = true
+  }
 }

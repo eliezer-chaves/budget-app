@@ -108,7 +108,6 @@ nz-badge {
   align-items: center !important;
   justify-content: center !important;
   padding: 16px !important;
-  border: 1px solid #e6f7ff !important; /* Borda azul clara */
   background-color: #1890ff !important; /* Azul original mantido */
   color: white !important;
 }

@@ -30,6 +30,7 @@ import {
 } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { ModalAddPurchaseComponent } from "../../components/modal-add-purchase/modal-add-purchase.component";
 
 interface ItemData {
   id: string;
@@ -75,7 +76,8 @@ interface ColumnItem {
     NzPopconfirmModule,
     NzGridModule,
     NzSpinModule,
-    NzToolTipModule
+    NzToolTipModule,
+    ModalAddPurchaseComponent
   ]
 })
 export class OpenPurchasesComponent implements OnInit {
@@ -423,10 +425,15 @@ export class OpenPurchasesComponent implements OnInit {
       this.loadPurchases();
       this.notificationService.success("Sucesso", "Situação alterada.");
     } catch {
-      this.notificationService.error("Erro!","Não foi possível alterar a situação do orçamento.")
-    }finally{
+      this.notificationService.error("Erro!", "Não foi possível alterar a situação do orçamento.")
+    } finally {
       this.loadPurchases()
     }
   }
 
+  isVisibleComponentNewPurchase = false
+
+  abrirModalNewPurchase() {
+    this.isVisibleComponentNewPurchase = true
+  }
 }
