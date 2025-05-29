@@ -99,15 +99,15 @@ nz-badge {
 /* Botão Primário (Novo Orçamento) - Mantido o azul original */
 .btn-as-card {
   height: 80px;
-  width: 200px;
+  width: 150px;
   border-radius: 12px !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.3s ease !important;
+
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 16px !important;
   background-color: #1890ff !important; /* Azul original mantido */
   color: white !important;
 }
@@ -115,7 +115,7 @@ nz-badge {
 /* Botões Secundários (Novas cores) */
 .btn-default {
   height: 80px;
-  width: 200px;
+  width: 150px;
   border-radius: 12px !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.3s ease !important;
@@ -123,9 +123,7 @@ nz-badge {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 16px !important;
   background-color: white !important;
-  border: 1px solid #f0f0f0 !important;
   color: #595959 !important; /* Cor de texto mais escura */
 }
 
@@ -299,4 +297,31 @@ button:nth-child(3).btn-default:hover {
     margin-bottom: 20px;
     min-width: 100%;
   }
+}
+.quick-menu {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+/* Media queries mantidas */
+@media (max-width: 388px) {
+  nz-table {
+    overflow-x: auto;
+    display: block;
+  }
+  .quick-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-default {
+    margin-top: 20px;
+  }
+}
+
+/* Media query para telas pequenas */
+@media (max-width: 800px) {
 }
