@@ -226,7 +226,7 @@ export class ModalAddPurchaseComponent implements OnInit {
       }
     }
   }
-
+ 
 
   trackByFn(index: number): number {
     return index;

@@ -59,24 +59,27 @@
 
     <!-- Botão -->
     <div nzJustify="center" nzAlign="middle" id="buttons-edit" class="">
-        
+
         <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
-            <button nz-button nzType="default" nzDanger (click)="showDeleteConfirm()" class="btn-table btn-edit-div-btn">
+            <button nz-button nzType="default" nzDanger (click)="showDeleteConfirm()"
+                class="btn-table btn-edit-div-btn">
                 <nz-icon nzType="delete" nzTheme="outline" class="me-1" />
                 Cancelar Orçamento
             </button>
 
         </div>
         <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
-            <button nz-button nzType="default" class=" btn-table btn-default btn-edit-div-btn" (click)="showModalCarrinho()">
+            <button nz-button nzType="default" class=" btn-table btn-default btn-edit-div-btn"
+                (click)="showModalCarrinho()">
                 <nz-icon nzType="shopping-cart" nzTheme="outline" />
                 Editar Categoria</button>
         </div>
         <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
-            <button nz-button nzType="default" class=" btn-table btn-default btn-edit-div-btn" (click)="showModalMercado()">
+            <button nz-button nzType="default" class=" btn-table btn-default btn-edit-div-btn"
+                (click)="showModalMercado()">
                 <nz-icon nzType="shop" nzTheme="outline" />
                 Editar Orçamento</button>
-        </div> 
+        </div>
         <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
             <button nz-button nzType="primary" class=" btn-table btn-green btn-edit-div-btn" (click)="createItem()">
                 <nz-icon nzType="plus" nzTheme="outline" />Adicionar Item</button>
@@ -266,6 +269,11 @@
     <ng-template #modalTitleCarrinhos>Editar Categoria</ng-template>
 
     <ng-template #modalContentCarrinhos>
+        <nz-input-group nzAddOnBefore="Quantidade de Categorias" class="mb-2">
+            <nz-input-number [(ngModel)]="qtdCarrinhos" nzMin="1" class="w-100"
+                (ngModelChange)="onQtdCarrinhosChange($event)" value=1 />
+        </nz-input-group>
+
         <div *ngFor="let category of listCategory; let i = index" class="mb-2">
             <nz-input-group [nzAddOnBefore]="'Categoria ' + (i + 1)">
                 <input type="text" nz-input [(ngModel)]="category.nome" />
