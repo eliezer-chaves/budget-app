@@ -58,32 +58,27 @@
     </div>
 
     <!-- Botão -->
-    <div nzJustify="center" nzAlign="middle" id="buttons-edit" class="d-flex justify-content-around">
-        <!-- <div>
-            <button nz-button nzType="default" (click)="voltar()" class="shadow  btn-table">
-                <nz-icon nzType="arrow-left" nzTheme="outline" class="me-1" />
-                Voltar
-            </button>
-        </div> -->
-        <div>
-            <button nz-button nzType="default" nzDanger (click)="showDeleteConfirm()" class="shadow  btn-table">
+    <div nzJustify="center" nzAlign="middle" id="buttons-edit" class="">
+        
+        <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
+            <button nz-button nzType="default" nzDanger (click)="showDeleteConfirm()" class="btn-table btn-edit-div-btn">
                 <nz-icon nzType="delete" nzTheme="outline" class="me-1" />
                 Cancelar Orçamento
             </button>
 
         </div>
-        <div>
-            <button nz-button nzType="default" class="shadow btn-table btn-default" (click)="showModalCarrinho()">
+        <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
+            <button nz-button nzType="default" class=" btn-table btn-default btn-edit-div-btn" (click)="showModalCarrinho()">
                 <nz-icon nzType="shopping-cart" nzTheme="outline" />
                 Editar Categoria</button>
         </div>
-        <div>
-            <button nz-button nzType="default" class="shadow btn-table btn-default" (click)="showModalMercado()">
+        <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
+            <button nz-button nzType="default" class=" btn-table btn-default btn-edit-div-btn" (click)="showModalMercado()">
                 <nz-icon nzType="shop" nzTheme="outline" />
                 Editar Orçamento</button>
-        </div>
-        <div>
-            <button nz-button nzType="primary" class="shadow btn-table btn-green" (click)="createItem()">
+        </div> 
+        <div class=" d-flex justify-content-center align-items-center" class="buttons-edit-div">
+            <button nz-button nzType="primary" class=" btn-table btn-green btn-edit-div-btn" (click)="createItem()">
                 <nz-icon nzType="plus" nzTheme="outline" />Adicionar Item</button>
         </div>
     </div>
