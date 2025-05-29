@@ -52,19 +52,19 @@ h2 {
 
 .card-label {
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin-bottom: 0.25rem;
   text-align: left;
 }
 
 .card-value {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   text-align: left;
 }
 
 .card-icon {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   height: 40px;
   width: 40px;
   display: flex;
@@ -137,6 +137,11 @@ h2 {
   color: #1890ff;
 }
 
+.btn-default:hover {
+  border-color: white !important;
+  color: white;
+  background-color: #1890ff;
+}
 /* ==================== */
 /* RESPONSIVIDADE */
 /* ==================== */
@@ -186,16 +191,34 @@ h2 {
   }
 }
 
+#buttons-edit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 @media (max-width: 1000px) {
   #buttons-edit {
+    width: 100%;
+  }
+}
+@media (max-width: 775px) {
+  #buttons-edit {
+    flex-wrap: wrap-reverse;
+    gap: 20px;
+  }
+  .buttons-edit-div {
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-edit-div-btn {
+    width: 100%;
   }
 }
 
-@media (min-width: 769px) {
-  .card  {
+@media (min-width: 775px) {
+  .card {
     max-width: 200px;
   }
 }
@@ -214,12 +237,22 @@ h2 {
     flex-direction: column;
   }
 
-  .card .total-card .carrinho-card{
+  .card .total-card .carrinho-card {
     width: 100%;
   }
 
   .finalizar-button {
     width: 100%;
     margin-top: 1rem;
+  }
+}
+@media (max-width: 380px) {
+  .btn-table {
+    width: 100%;
+    margin-top: 10px;
+  }
+  #buttons-edit {
+    width: 100%;
+    gap: 0px;
   }
 }

@@ -1,22 +1,93 @@
+/* Tipografia */
 h2 {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
-  font-style: normal;
 }
 
+/* Quick Menu */
+.quick-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Botão Principal */
+.btn-as-card,
+.btn-default {
+  height: 80px;
+  width: 170px;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 500 !important;
+}
+
+.btn-as-card {
+  background-color: #1890ff !important;
+  color: white !important;
+}
+
+.btn-default {
+  background-color: white !important;
+  color: #595959 !important;
+  border: 1px solid #1890ff !important;
+}
+
+/* Botões com cores específicas */
+.quick-menu button:nth-child(2).btn-default {
+  border-color: #ffd591 !important;
+  color: #d46b08 !important;
+}
+
+.quick-menu button:nth-child(3).btn-default {
+  border-color: #b7eb8f !important;
+  color: #389e0d !important;
+}
+
+/* Hover nos botões */
+.btn-as-card:hover {
+  background-color: #40a9ff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn-default:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.quick-menu button:nth-child(2).btn-default:hover {
+  background-color: #fff7e6 !important;
+}
+
+.quick-menu button:nth-child(3).btn-default:hover {
+  background-color: #f6ffed !important;
+}
+
+/* Ícones e texto dos botões */
+.btn-as-card .anticon,
+.btn-default .anticon {
+  font-size: 20px !important;
+  margin-bottom: 6px !important;
+}
+
+.btn-as-card span,
+.btn-default span {
+  font-size: 1rem !important;
+}
+
+/* Cards */
 .cards {
   display: flex;
-  flex-wrap: wrap !important;
-  justify-content: space-around;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: stretch;
 }
-.card-resumo-spin {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80px;
-  min-width: 300px;
-}
+
 .card-group {
   display: flex;
   justify-content: space-between;
@@ -24,7 +95,17 @@ h2 {
   text-align: left;
   flex-wrap: nowrap;
   min-height: 80px;
-  min-width: 300px;
+  min-width: 170px;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #f0f0f0 !important;
+  padding: 1rem;
+  transition: all 0.3s ease !important;
+}
+
+.card-group:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 .card-resumo {
@@ -36,57 +117,73 @@ h2 {
 }
 
 .card-label {
-  font-weight: 400;
-  font-size: 1rem;
+  font-weight: 500;
+  font-size: 0.85rem;
   margin-bottom: 0.25rem;
 }
 
 .card-value {
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1.05rem;
+  font-weight: 600;
 }
 
 .card-icon {
   font-size: 1.5rem;
-  color: #555;
   margin-left: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0; /* impede que o ícone encolha e perca alinhamento */
+  flex-shrink: 0;
 }
 
-/* Media query para telas pequenas */
-@media (max-width: 500px) {
-  .card-group,
-  .card-resumo-spin {
-    margin-bottom: 30px;
-  }
+/* Cores dos cards */
+.card-group:nth-child(1) {
+  border-left: 4px solid #1890ff !important;
 }
 
-/* Media query para telas pequenas */
-@media (max-width: 800px) {
-  .card-group,
-  .card-resumo-spin {
-    margin-bottom: 30px;
-  }
-}
-/* Media query para telas pequenas */
-@media (max-width: 1000px) {
-  .card-group,
-  .card-resumo-spin {
-    margin-bottom: 30px;
-  }
+.card-group:nth-child(2) {
+  border-left: 4px solid #389e0d !important;
 }
 
-.btn-default {
-  border-color: #1890ff !important;
-  color: #1890ff;
+.card-group:nth-child(3) {
+  border-left: 4px solid #d46b08 !important;
 }
 
+.card-group:nth-child(1) .card-label,
+.card-group:nth-child(1) .card-value,
+.card-group:nth-child(1) .card-icon {
+  color: #1890ff !important;
+}
+
+.card-group:nth-child(2) .card-label,
+.card-group:nth-child(2) .card-value,
+.card-group:nth-child(2) .card-icon {
+  color: #389e0d !important;
+}
+
+.card-group:nth-child(3) .card-label,
+.card-group:nth-child(3) .card-value,
+.card-group:nth-child(3) .card-icon {
+  color: #d46b08 !important;
+}
+
+/* Card loading */
+.card-resumo-spin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  min-width: 300px;
+  border-radius: 10px !important;
+  background-color: #fafafa !important;
+  border: 1px solid #f0f0f0 !important;
+}
+
+/* Badge exemplo */
 nz-badge {
   margin-right: 20px;
 }
+
 .head-example {
   width: 42px;
   height: 42px;
@@ -96,207 +193,50 @@ nz-badge {
   vertical-align: middle;
 }
 
-/* Botão Primário (Novo Orçamento) - Mantido o azul original */
-.btn-as-card {
-  height: 80px;
-  width: 200px;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-  transition: all 0.3s ease !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 16px !important;
-  background-color: #1890ff !important; /* Azul original mantido */
-  color: white !important;
+/* ===== MEDIA QUERIES CENTRALIZADAS ===== */
+@media (max-width: 380px) {
+  .quick-menu {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cards {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-default {
+    margin-top: 10px;
+  }
+
+  nz-table {
+    overflow-x: auto;
+    display: block;
+  }
 }
 
-/* Botões Secundários (Novas cores) */
-.btn-default {
-  height: 80px;
-  width: 200px;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-  transition: all 0.3s ease !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 16px !important;
-  background-color: white !important;
-  border: 1px solid #f0f0f0 !important;
-  color: #595959 !important; /* Cor de texto mais escura */
+@media (min-width: 381px) and (max-width: 1000px) {
+  .quick-menu {
+    flex-wrap: wrap;
+    justify-content: start;
+  }
+
+  .cards {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .card-group {
+    flex: 1 1 45%;
+  }
 }
 
-/* Cores específicas para cada botão secundário */
-button:nth-child(2).btn-default {
-  /* Orçamentos em Aberto */
-  border-color: #b7eb8f !important;
-  color: #389e0d !important;
-}
+@media (min-width: 1001px) {
+  .quick-menu {
+    justify-content: flex-start;
+  }
 
-button:nth-child(3).btn-default {
-  /* Histórico */
-  border-color: #ffd591 !important;
-  color: #d46b08 !important;
-}
-
-/* Efeitos Hover */
-.btn-as-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
-  background-color: #40a9ff !important; /* Azul mais claro no hover */
-}
-
-.btn-default:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-button:nth-child(2).btn-default:hover {
-  /* Orçamentos em Aberto */
-  background-color: #f6ffed !important; /* Verde muito claro */
-}
-
-button:nth-child(3).btn-default:hover {
-  /* Histórico */
-  background-color: #fff7e6 !important; /* Laranja muito claro */
-}
-
-/* Ajustes de ícone e texto */
-.btn-as-card .anticon,
-.btn-default .anticon {
-  font-size: 20px !important; /* Ícones reduzidos */
-  margin-bottom: 6px !important;
-}
-
-.btn-as-card span,
-.btn-default span {
-  font-size: 1rem !important; /* Texto aumentado */
-  font-weight: 500 !important;
-}
-
-/* Ajuste geral dos cards para combinar com os botões */
-.card-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: left;
-  flex-wrap: nowrap;
-  min-height: 80px;
-  min-width: 300px;
-  border-radius: 10px !important; /* Reduzido de 12px para 10px */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-  transition: all 0.3s ease !important;
-  border: 1px solid #f0f0f0 !important;
-}
-
-/* Efeito hover para cards */
-.card-group:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Cores específicas para cada card */
-.card-group:nth-child(1) {
-  /* Total Gasto */
-  border-left: 4px solid #1890ff !important; /* Azul do botão primário */
-  /*background-color: #f6fbff !important; /* Azul muito claro */
-}
-
-.card-group:nth-child(2) {
-  /* Orçamentos Realizados */
-  border-left: 4px solid #389e0d !important; /* Verde do botão secundário */
-  /* background-color: #f6ffed !important; Verde muito claro */
-}
-
-.card-group:nth-child(3) {
-  /* Orçamentos em Aberto */
-  border-left: 4px solid #d46b08 !important; /* Laranja do botão secundário */
-  /*background-color: #fff7e6 !important;  Laranja muito claro */
-}
-
-/* Ajuste nos textos para melhor contraste */
-.card-group:nth-child(1) .card-label,
-.card-group:nth-child(1) .card-value {
-  color: #1890ff !important;
-}
-
-.card-group:nth-child(2) .card-label,
-.card-group:nth-child(2) .card-value {
-  color: #389e0d !important;
-}
-
-.card-group:nth-child(3) .card-label,
-.card-group:nth-child(3) .card-value {
-  color: #d46b08 !important;
-}
-
-/* Ícones com cores temáticas */
-.card-group:nth-child(1) .card-icon {
-  color: #1890ff !important;
-}
-
-.card-group:nth-child(2) .card-icon {
-  color: #389e0d !important;
-}
-
-.card-group:nth-child(3) .card-icon {
-  color: #d46b08 !important;
-}
-
-/* Ajuste no card de loading */
-.card-resumo-spin {
-  border-radius: 10px !important;
-  background-color: #fafafa !important;
-  border: 1px solid #f0f0f0 !important;
-  min-height: 80px;
-  min-width: 300px;
-}
-
-/* Mantendo os outros estilos existentes */
-.cards {
-  display: flex;
-  flex-wrap: wrap !important;
-  justify-content: space-around;
-  align-items: center;
-  gap: 16px; /* Espaçamento entre cards */
-}
-
-.card-resumo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  flex: 1;
-}
-
-.card-label {
-  font-weight: 500 !important; /* Mais negrito para combinar com botões */
-  font-size: 0.95rem;
-  margin-bottom: 0.25rem;
-}
-
-.card-value {
-  font-size: 1.2rem !important; /* Aumentado para maior destaque */
-  font-weight: 600 !important;
-}
-
-.card-icon {
-  font-size: 1.8rem !important; /* Ícones um pouco maiores */
-  margin-left: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* Media queries mantidas */
-@media (max-width: 1000px) {
-  .card-group,
-  .card-resumo-spin {
-    margin-bottom: 20px;
-    min-width: 100%;
+  .cards {
+    justify-content: space-between;
   }
 }

@@ -67,6 +67,7 @@ export class DashboardPageComponent implements OnInit {
   protected LoadingService = inject(LoadingService);
   private supabase = injectSupabase();
   private notificationService = inject(NzNotificationService);
+  @ViewChildren('inputEl') inputElements!: QueryList<ElementRef>;
 
   user = signal<iUser | null>(null);
   loading = true;
@@ -141,15 +142,17 @@ export class DashboardPageComponent implements OnInit {
     }
   ];
 
+  tempListCategory: { nome: string, id: string }[] = [];
   listCategory: { nome: string, id: string }[] = [];
+
   categoriaSelecionada: string = ''
+
   isMobile = window.innerWidth < 770;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.isMobile = event.target.innerWidth < 770;
   }
-
 
   async ngOnInit(): Promise<void> {
     // 1. Verifica se veio do histórico
@@ -163,7 +166,6 @@ export class DashboardPageComponent implements OnInit {
 
       this.currentPurchaseId = currentPurchase.purchaseId;
     }
-
 
     await this.loadData();       // 1. Carrega dados básicos e define currentPurchaseId
     await this.carregarTotais(); // 2. Agora pode carregar totais com ID conhecido
@@ -286,6 +288,7 @@ export class DashboardPageComponent implements OnInit {
       };
     }
   }
+
   updateItemTotal(itemId: string): void {
     if (this.editCache[itemId] && this.editCache[itemId].data) {
       const item = this.editCache[itemId].data;
@@ -294,6 +297,7 @@ export class DashboardPageComponent implements OnInit {
       item.total = value * quantity;
     }
   }
+
   // Salva as alterações - PRINCIPAL MELHORIA
   async saveEdit(id: string): Promise<void> {
     try {
@@ -442,8 +446,6 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-
-
   countItems(): number {
     const dadosSalvos = JSON.parse(localStorage.getItem('ultimaCompra') || '{}');
     const total = dadosSalvos?.items?.length || 0;
@@ -494,7 +496,7 @@ export class DashboardPageComponent implements OnInit {
         nome: cart.car_name,
         id: cart.car_id.toString()
       }));
-
+      this.qtdCarrinhos = this.listCategory.length
     } catch (error) {
       console.error('Erro no loadData:', error);
     }
@@ -509,6 +511,7 @@ export class DashboardPageComponent implements OnInit {
     });
     return Array.from(uniqueCarts).sort();
   }
+
   // Atualiza os filtros da coluna Categoria
   updateCartFilters(): void {
     const cartColumnIndex = this.listOfColumns.findIndex(c => c.name === 'Categoria');
@@ -530,12 +533,10 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  // Helper para obter ID do carrinho pelo nome
   getCartIdByName(cartName: string): number | null {
     const cart = this.listCategory.find(c => c.nome === cartName);
-    return cart ? parseInt(cart.id) : null;
+    return cart?.id ? parseInt(cart.id) : null;
   }
-
 
   //PEGA O ID DO CARRINHO SELECIONADO, FUNCIONA NA VERSAO ATUAL
   getCartIdSelecionado(): number | null {
@@ -594,6 +595,7 @@ export class DashboardPageComponent implements OnInit {
       this.updateCartFilters(); // Atualiza os filtros mesmo sem itens
     }
   }
+
   trackById(index: number, item: any): any {
     return item.id;
   }
@@ -611,11 +613,8 @@ export class DashboardPageComponent implements OnInit {
 
       // Substitui vírgula por ponto e remove pontos de milhar
       const numericString = cleanedValue.replace('.', '').replace(',', '.');
-
       const valorUnidade = parseFloat(numericString); // 1000.00
       const valorTotal = valorUnidade * this.itemQtd;
-
-
 
       const { data, error } = await this.supabase
         .from('itm_item')
@@ -640,58 +639,6 @@ export class DashboardPageComponent implements OnInit {
     } finally {
 
     }
-
-    // try {
-    //   const cartId: number | null = this.getCartIdSelecionado();
-
-    //   if (!cartId || this.item == '' || this.valorUnidade == '') {
-    //     this.notificationService.error('Erro', 'Preencha todos os campos!');
-    //     return;
-    //   }
-
-    //   const cleanedValue: string = this.valorUnidade.replace(/[^\d.,-]/g, '').replace(',', '.');
-    //   const valorUnidade: number = parseFloat(cleanedValue);
-    //   const valorTotal: number = valorUnidade * this.itemQtd;
-
-    //   const newItem: CartItem = {
-    //     id: this.generateRandomId(),
-    //     itm_auth_id: this.user()?.id,
-    //     itm_name: this.item,
-    //     itm_value: valorUnidade,
-    //     itm_quantity: this.itemQtd,
-    //     itm_total: valorTotal,
-    //     itm_cart_id: cartId.toString(),
-    //     cartName: this.getCartName(cartId.toString())
-    //   };
-
-    //   const dadosSalvos: string | null = localStorage.getItem('ultimaCompra');
-
-    //   if (dadosSalvos) {
-    //     const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-    //     dadosCompra.items = [...(dadosCompra.items || []), newItem];
-    //     localStorage.setItem('ultimaCompra', JSON.stringify(dadosCompra));
-
-    //     this.dataSet = dadosCompra.items;
-    //     this.tableItems = this.dataSet.map(item => ({
-    //       id: item.id,
-    //       name: item.itm_name,
-    //       value: item.itm_value,
-    //       quantity: item.itm_quantity,
-    //       total: item.itm_total,
-    //       cart: item.cartName
-    //     }));
-
-    //     this.updateEditCache(); // Atualiza o cache de edição
-    //     this.updateCartFilters();
-    //   }
-    //   this.loadData()
-    //   this.notificationService.success('Item Adicionado', this.item);
-    //   this.limparInputs();
-
-    // } catch (error) {
-    //   console.error('Erro:', error);
-    //   this.notificationService.error('Erro', 'Não foi possível adicionar o item');
-    // }
   }
 
   getCartName(cartId: string): string {
@@ -729,20 +676,11 @@ export class DashboardPageComponent implements OnInit {
 
   isVisibleCarrinho = false
 
-  showModalCarrinho(): void {
-    this.isVisibleCarrinho = true;
-    const dadosSalvos: string | null = localStorage.getItem('ultimaCompra');
-    if (dadosSalvos) {
-      const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-      const cartIdsAsStrings: string[] = dadosCompra.cartsIds.map(id => id.toString());
-      const cartsNames = dadosCompra.nomeCarrinhos.map(id => id)
-
-      this.carts = dadosCompra.cartsIds.map((id, index) => ({
-        id: id.toString(),
-        nome: dadosCompra.nomeCarrinhos[index] || ''
-      }));
-    }
-  }
+  // showModalCarrinho(): void {
+  //   this.isVisibleCarrinho = true;
+  //   this.tempListCategory = this.listCategory
+  //   console.log('temp', this.tempListCategory)
+  // }
 
   handleOkCarrinhos(): void {
     this.updateCarrinhos()
@@ -752,41 +690,155 @@ export class DashboardPageComponent implements OnInit {
     this.isVisibleCarrinho = false;
   }
 
-  carts: { id: string; nome: string }[] = [];
-  //corrigida
-
   async updateCarrinhos() {
     this.LoadingService.startLoading();
 
     try {
-      for (let i = 0; i < this.listCategory.length; i++) {
-        const { data, error } = await this.supabase
-          .from('car_carts')
-          .update({
-            car_name: this.listCategory[i].nome
-          })
-          .eq('car_id', this.listCategory[i].id)
-          .select()
+      // Cria mapas para facilitar a comparação
+      const oldItemsMap = new Map(this.tempListCategory.map(item => [item.id, item]));
+      const newItemsMap = new Map(this.listCategory.map(item => [item.id, item]));
+
+      // Arrays para armazenar as operações
+      const inserts = [];
+      const updates = [];
+      const deletes = [];
+
+      // Identificar itens para inserção (novos) ou atualização (modificados)
+      for (const newItem of this.listCategory) {
+        if (newItem.id === "") {
+          // Novo item (inserção)
+          inserts.push(newItem);
+        } else {
+          const oldItem = oldItemsMap.get(newItem.id);
+          if (oldItem && oldItem.nome !== newItem.nome) {
+            // Item modificado (atualização)
+            updates.push(newItem);
+          }
+        }
       }
-      this.loadData()
-      this.loadTable()
-      // Atualiza os filtros da tabela
+
+      // Identificar itens para exclusão (removidos da lista)
+      for (const oldItem of this.tempListCategory) {
+        if (oldItem.id !== "" && !newItemsMap.has(oldItem.id)) {
+          deletes.push(oldItem.id);
+        }
+      }
+
+      // Executar operações de inserção
+      for (const item of inserts) {
+        const { error } = await this.supabase
+          .from('car_carts')
+          .insert({
+            car_name: item.nome,
+            car_auth_id: this.auth.currentUser()?.id,
+            car_purchase_id: this.currentPurchaseId
+          });
+        if (error) throw error;
+      }
+
+      // Executar operações de atualização
+      for (const item of updates) {
+        const { error } = await this.supabase
+          .from('car_carts')
+          .update({ car_name: item.nome })
+          .eq('car_id', item.id);
+        if (error) throw error;
+      }
+
+      // Executar operações de exclusão
+      if (deletes.length > 0) {
+        const { error } = await this.supabase
+          .from('car_carts')
+          .delete()
+          .in('car_id', deletes);
+        if (error) throw error;
+      }
+
+      // Atualizar a interface
+      this.loadData();
+      this.loadTable();
       this.updateCartFilters();
-      // Atualiza o cache de edição
       this.updateEditCache();
-      // Atualiza os totais
       this.carregarTotais();
-      this.LoadingService.stopLoading();
+
       this.notificationService.success('Carrinhos atualizados com sucesso!', '');
       this.isVisibleCarrinho = false;
-    } catch {
-      this.notificationService.error('Não foi possivel alterar', '');
+
+    } catch (error) {
+      console.error('Erro ao atualizar carrinhos:', error);
+      this.notificationService.error('Não foi possível alterar', '');
 
     } finally {
+      this.LoadingService.stopLoading();
       this.isVisibleCarrinho = false;
     }
   }
 
+  showModalCarrinho(): void {
+    this.isVisibleCarrinho = true;
+    // Cria uma cópia profunda da lista atual para comparação posterior
+    this.tempListCategory = JSON.parse(JSON.stringify(this.listCategory));
+  }
+  // async updateCarrinhos() {
+  //   this.LoadingService.startLoading();
+
+  //   try {
+  //     console.log('list', this.listCategory)
+
+
+  //     for (let i = 0; i < this.listCategory.length; i++) {
+  //       if (this.listCategory[i].id == "") {
+  //         const { error: insertError } = await this.supabase
+  //           .from('car_carts')
+  //           .insert({
+  //             car_name: this.listCategory[i].nome,
+  //             car_auth_id: this.auth.currentUser()?.id,
+  //             car_purchase_id: this.currentPurchaseId
+  //           })
+  //       } else {
+  //         const { data, error } = await this.supabase
+  //           .from('car_carts')
+  //           .update({
+  //             car_name: this.listCategory[i].nome
+  //           })
+  //           .eq('car_id', this.listCategory[i].id)
+  //       }
+  //     }
+
+  //     this.loadData()
+  //     this.loadTable()
+  //     // Atualiza os filtros da tabela
+  //     this.updateCartFilters();
+  //     // Atualiza o cache de edição
+  //     this.updateEditCache();
+  //     // Atualiza os totais
+  //     this.carregarTotais();
+  //     this.LoadingService.stopLoading();
+  //     this.notificationService.success('Carrinhos atualizados com sucesso!', '');
+  //     this.isVisibleCarrinho = false;
+  //   } catch {
+  //     this.notificationService.error('Não foi possivel alterar', '');
+
+  //   } finally {
+  //     this.isVisibleCarrinho = false;
+  //   }
+  // }
+
+  onQtdCarrinhosChange(newValue: number) {
+    const currentLength = this.listCategory.length;
+
+    if (newValue > currentLength) {
+
+      for (let i = currentLength; i < newValue; i++) {
+        this.listCategory.push({
+          nome: '',
+          id: '',
+        });
+      }
+    } else if (newValue < currentLength) {
+      this.listCategory.length = newValue;
+    }
+  }
 
   async updateMercado() {
     this.LoadingService.startLoading()
@@ -958,9 +1010,6 @@ export class DashboardPageComponent implements OnInit {
       //localStorage.removeItem('ultimaCompra');
 
       this.router.navigate(['dashboard'])
-
-
-
     }
     catch {
       this.notificationService.error('Erro', 'Não foi possível cancelar sua compra!')
@@ -968,4 +1017,6 @@ export class DashboardPageComponent implements OnInit {
     //this.router.navigate(['dashboard'])
     this.LoadingService.stopLoading()
   }
+
+
 }
