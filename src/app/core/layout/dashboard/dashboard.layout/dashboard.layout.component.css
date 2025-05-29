@@ -62,8 +62,8 @@ nz-content {
   min-height: 360px;
 }
 
-nz-layout {
-  min-height: 100vh;
+nz-layout, html, body {
+  height: 100%;
 }
 
 /* Estilos para o Sider como overlay */
