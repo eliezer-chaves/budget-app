@@ -8,7 +8,7 @@
     <nz-icon nzType="file-add" nzTheme="outline" />
     <span>Novo Orçamento</span>
   </button> -->
-    <button nz-button nzType="primary" (click)="abrirModalNewPurchase()" class="btn-as-card p-1">
+    <button nz-button nzType="primary" (click)="abrirModalNewPurchase()" class="btn-as-card">
       <nz-icon nzType="file-add" nzTheme="outline" />
       <span>Novo Orçamento</span>
     </button>
@@ -21,7 +21,7 @@
   </div>
 </div>
 <div class="mt-4">
-  <div class=" cards">
+  <div class="cards">
     <!-- Card 1: Total Gasto -->
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
       <div class="p-3 card-group rounded bg-white shadow ">
