@@ -107,10 +107,10 @@ export class DashboardPageComponent implements OnInit {
     this.loadingTable = true
     this.LoadingService.startLoading()
     try {
-      const termo = this.termoPesquisa.trim().toLowerCase();
-      const { data, error } = await this.supabase
-        .from('itm_item')
-        .select(`
+    const termo = this.termoPesquisa.trim().toLowerCase();
+    const { data, error } = await this.supabase
+      .from('itm_item')
+      .select(`
         *,
         car_carts:itm_cart_id (
           car_purchase_id,
@@ -118,18 +118,19 @@ export class DashboardPageComponent implements OnInit {
             pur_date, pur_market_name
           )
         )`)
-        .ilike('itm_name', `%${termo}%`);
-        console.log(data)
-      if (data) {
-        for (let i = 0; i < data.length; i++) {
-          this.searchItems[i] = {
-            date: data[i].car_carts.pur_purchase.pur_date,
-            name: data[i].itm_name,
-            price: data[i].itm_value,
-            place: data[i].car_carts.pur_purchase.pur_market_name
-          };
-        }
+      .ilike('itm_name', `%${termo}%`);
+
+    if (data) {
+      for (let i = 0; i < data.length; i++) {
+        this.searchItems[i] = {
+          date: data[i].car_carts.pur_purchase.pur_date,
+          name: data[i].itm_name,
+          price: data[i].itm_value,
+          place: data[i].car_carts.pur_purchase.pur_market_name,
+          quantity: data[i].itm_quantity
+        };
       }
+    }
     }
     catch (error) {
       console.error('Erro ao buscar itens:', error);
@@ -369,7 +370,7 @@ export class DashboardPageComponent implements OnInit {
   }
 
   isVisibleComponentNewPurchase = false
-  
+
   abrirModalNewPurchase() {
     this.isVisibleComponentNewPurchase = true
   }

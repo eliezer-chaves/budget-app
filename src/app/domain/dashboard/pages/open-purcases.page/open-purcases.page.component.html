@@ -36,7 +36,7 @@
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
         <div class="p-3 card-group rounded bg-white shadow ">
             <div class="card-resumo">
-                <span class="card-label ">Orçamentos finalizados</span>
+                <span class="card-label ">Compras finalizadas</span>
                 <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompraEmAberto">
                     {{ comprasRealizadas }}
                 </span>
@@ -51,7 +51,7 @@
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
         <div class="p-3 card-group rounded bg-white shadow ">
             <div class="card-resumo">
-                <span class=" card-label">Orçamentos em aberto</span>
+                <span class=" card-label">Compras em aberto</span>
                 <span class=" card-value mt-2 " *ngIf="comprasEmAberto > 0; else templateSemCompraEmAberto">
                     {{ comprasEmAberto }}
                 </span>
@@ -85,7 +85,7 @@
         <nz-spin nzTip="Carregando..." class="bg-white" [nzSpinning]="LoadingService.loading()">
             <div class="header-table mb-3 ">
                 <div class="header-table-date">
-                    <nz-range-picker [(ngModel)]="periodo" [nzFormat]="dateFormat"
+                    <nz-range-picker [(ngModel)]="periodo" [nzFormat]="dateFormat" style="width: 200px;"
                         (ngModelChange)="onChangeDatePicker($event)" class="text-center header-table-date-picker"></nz-range-picker>
                     <button nz-button nzType="default" (click)="setCurrentMonthRange(); loadDataForSelectedPeriod()" class="header-table-date-button">
                         <nz-icon nzType="calendar" nzTheme="outline"></nz-icon>

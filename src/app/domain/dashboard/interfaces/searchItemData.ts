@@ -3,4 +3,5 @@ export interface SearchItemData {
     name: string;
     price: number;
     place: string;
+    quantity: number;
 }

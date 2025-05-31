@@ -10,7 +10,7 @@
   </button> -->
     <button nz-button nzType="primary" (click)="abrirModalNewPurchase()" class="btn-as-card">
       <nz-icon nzType="file-add" nzTheme="outline" />
-      <span>Novo Orçamento</span>
+      <span>Nova Compra</span>
     </button>
 
     <button nz-button nzType="default" (click)="openPurchases()" class="btn-default">
@@ -42,7 +42,7 @@
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
       <div class="p-3 card-group rounded bg-white shadow ">
         <div class="card-resumo">
-          <span class="card-label ">Orçamentos Finalizados</span>
+          <span class="card-label ">Compras Realizadas</span>
           <span class="card-value mt-2" *ngIf="comprasRealizadas > 0; else templateSemCompraEmAberto">
             {{ comprasRealizadas }}
           </span>
@@ -57,7 +57,7 @@
     <ng-container *ngIf="!loadingCards; else loadingTemplate">
       <div class="p-3 card-group rounded bg-white shadow ">
         <div class="card-resumo">
-          <span class=" card-label">Orçamentos em Aberto</span>
+          <span class=" card-label">Compras em Aberto</span>
           <span class=" card-value mt-2 " *ngIf="comprasEmAberto > 0; else templateSemCompraEmAberto">
             {{ comprasEmAberto }}
           </span>
@@ -87,7 +87,7 @@
 
 <div class=" mt-4 bg-white p-3 shadow rounded">
   <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="max-width: 300px;">
-    <input type="text" nz-input placeholder="Informe algum item..." [(ngModel)]="termoPesquisa"
+    <input type="text" nz-input placeholder="Pesquisar item..." [(ngModel)]="termoPesquisa"
       (keyup.enter)="pesquisarItem()" />
   </nz-input-group>
 
@@ -107,7 +107,8 @@
             <th class="text-center">Data</th>
             <th class="text-center">Nome</th>
             <th class="text-center">Preço</th>
-            <th class="text-center">Orçamento</th>
+            <th class="text-center">Quantidade</th>
+            <th class="text-center">Lugar</th>
           </tr>
         </thead>
         <tbody>
@@ -116,6 +117,9 @@
             <td class="text-center">{{ item.name }}</td>
             <td class="text-center">
               {{ item.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </td>
+            <td class="text-center">
+              {{item.quantity}}
             </td>
             <td class="text-center">{{ item.place }}</td>
           </tr>

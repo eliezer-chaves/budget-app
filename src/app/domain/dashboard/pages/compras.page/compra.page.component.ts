@@ -108,7 +108,7 @@ export class DashboardPageComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
     },
     {
-      name: 'Valor Uni.',
+      name: 'Valor',
       sortOrder: null,
       sortFn: (a: ItemData, b: ItemData) => (a.value || 0) - (b.value || 0),
       sortDirections: ['ascend', 'descend', null],
@@ -980,7 +980,7 @@ export class DashboardPageComponent implements OnInit {
     this.modal.confirm({
       nzTitle: '<i>Você tem certeza que quer cancelar essa compra?</i>',
       nzContent: '<b style="color: red;">Todos os itens dessa compra serão deletados e não será possível recuperá-los...</b>',
-      nzOkText: 'Cancelar Orçamento',
+      nzOkText: 'Cancelar Compra',
       nzOkType: 'primary',
       nzOkDanger: true,
       nzOnOk: () => this.cancelPurchase(),

@@ -256,3 +256,10 @@ h2 {
     gap: 0px;
   }
 }
+
+th.col-name, td.col-name { width: 20%; }
+th.col-quantity, td.col-quantity { width: 5%; }
+th.col-value, td.col-value { width: 20%; }
+th.col-total, td.col-total { width: 15%; }
+th.col-cart, td.col-cart { width: 20%; }
+th.col-actions, td.col-actions { width: 10%; }

@@ -104,7 +104,7 @@ export class OpenPurchasesComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
     },
     {
-      name: 'Orçamento',
+      name: 'Lugar',
       sortOrder: null,
       sortFn: (a, b) => a.purchaseName.localeCompare(b.purchaseName),
       sortDirections: ['ascend', 'descend', null],

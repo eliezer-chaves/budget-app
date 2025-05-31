@@ -1,7 +1,7 @@
 <nz-modal [nzVisible]="true" (nzOnCancel)="closeModal()" (nzOnOk)="closeModal()"
  [nzTitle]="modalTitle" [nzContent]="modalContent"
   [nzFooter]="modalFooter" >
-  <ng-template #modalTitle>Novo Orçamento</ng-template>
+  <ng-template #modalTitle>Nova Compra</ng-template>
 
   <ng-template #modalContent>
 
@@ -10,7 +10,7 @@
         nzFormat="dd/MM/yyyy"></nz-date-picker>
     </nz-input-group>
 
-    <nz-form-control [nzErrorTip]="'O nome do Orçamento é obrigatório'">
+    <nz-form-control [nzErrorTip]="'O nome do lugar é obrigatório'">
       <nz-input-group nzAddOnBefore="Local" class="mt-2 ">
         <input type="text" nz-input placeholder="Ex: Supermercado" [(ngModel)]="mercadoNome" name="mercadoNome" required
           #mercadoInput="ngModel" />
