@@ -760,6 +760,7 @@ export class DashboardPageComponent implements OnInit {
       this.updateCartFilters();
       this.updateEditCache();
       this.carregarTotais();
+    
 
       this.notificationService.success('Carrinhos atualizados com sucesso!', '');
       this.isVisibleCarrinho = false;
