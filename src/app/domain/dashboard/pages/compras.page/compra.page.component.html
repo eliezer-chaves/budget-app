@@ -125,23 +125,26 @@
             [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'">
             <thead>
                 <tr>
-                    <th class="col-name"  [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
+                    <th class="col-name" [nzSortOrder]="listOfColumns[0].sortOrder" [nzSortFn]="listOfColumns[0].sortFn"
                         [nzSortDirections]="listOfColumns[0].sortDirections" class="text-center">
                         {{ listOfColumns[0].name }}
                     </th>
 
-                    <th class="col-quantity"  [nzSortOrder]="listOfColumns[1].sortOrder" [nzSortFn]="listOfColumns[1].sortFn"
-                        [nzSortDirections]="listOfColumns[1].sortDirections" class="text-center">
+                    <th class="col-quantity" [nzSortOrder]="listOfColumns[1].sortOrder"
+                        [nzSortFn]="listOfColumns[1].sortFn" [nzSortDirections]="listOfColumns[1].sortDirections"
+                        class="text-center">
                         {{ listOfColumns[1].name }}
                     </th>
 
-                    <th class="col-value" [nzSortOrder]="listOfColumns[2].sortOrder" [nzSortFn]="listOfColumns[2].sortFn"
-                        [nzSortDirections]="listOfColumns[2].sortDirections" class="text-center">
+                    <th class="col-value" [nzSortOrder]="listOfColumns[2].sortOrder"
+                        [nzSortFn]="listOfColumns[2].sortFn" [nzSortDirections]="listOfColumns[2].sortDirections"
+                        class="text-center">
                         {{ listOfColumns[2].name }}
                     </th>
 
-                    <th class="col-total" [nzSortOrder]="listOfColumns[3].sortOrder" [nzSortFn]="listOfColumns[3].sortFn"
-                        [nzSortDirections]="listOfColumns[3].sortDirections" class="text-center">
+                    <th class="col-total" [nzSortOrder]="listOfColumns[3].sortOrder"
+                        [nzSortFn]="listOfColumns[3].sortFn" [nzSortDirections]="listOfColumns[3].sortDirections"
+                        class="text-center">
                         {{ listOfColumns[3].name }}
                     </th>
 
@@ -153,8 +156,9 @@
                         {{ listOfColumns[4].name }}
                     </th>
 
-                    <th class="col-actions" [nzSortOrder]="listOfColumns[5].sortOrder" [nzSortFn]="listOfColumns[5].sortFn"
-                        [nzSortDirections]="listOfColumns[5].sortDirections" class="text-center">
+                    <th class="col-actions" [nzSortOrder]="listOfColumns[5].sortOrder"
+                        [nzSortFn]="listOfColumns[5].sortFn" [nzSortDirections]="listOfColumns[5].sortDirections"
+                        class="text-center">
                         {{ listOfColumns[5].name }}
                     </th>
                 </tr>
@@ -205,30 +209,36 @@
                     </td>
                     <td class="col-actions">
                         <ng-container *ngIf="!editCache[data.id]?.edit; else saveCancel">
-                            <button nz-button nzType="primary" class="edit-button" (click)="startEdit(data.id)">
-                                <nz-icon nzType="edit" nzTheme="outline" />
-                                Editar
-                            </button>
-                            <nz-divider [nzType]="isMobile ? 'horizontal' : 'vertical'"></nz-divider>
-
-                            <button nz-button nzType="primary" nzDanger nz-popconfirm
-                                nzPopconfirmTitle="Tem certeza que deseja remover este item?"
-                                (nzOnConfirm)="deleteItem(data.id)" class="edit-button">
-                                <nz-icon nzType="delete" nzTheme="outline" />
-                                Remover
-                            </button>
+                            <div class="btn-actions">
+                                <button nz-button nzType="primary" nzSize="small" class="edit-button"
+                                    (click)="startEdit(data.id)">
+                                    <nz-icon nzType="edit" nzTheme="outline"></nz-icon>
+                                    Editar
+                                </button>
+                                <button nz-button nzType="primary" nzDanger nzSize="small" nz-popconfirm
+                                    nzPopconfirmTitle="Tem certeza que deseja remover este item?"
+                                    (nzOnConfirm)="deleteItem(data.id)" class="edit-button">
+                                    <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
+                                    Remover
+                                </button>
+                            </div>
                         </ng-container>
+
                         <ng-template #saveCancel>
-                            <button nz-button nzType="primary" (click)="saveEdit(data.id)" class="save edit-button">
-                                <nz-icon nzType="save" nzTheme="outline" />
-                                Salvar
-                            </button>
-                            <nz-divider [nzType]="isMobile ? 'horizontal' : 'vertical'"></nz-divider>
-                            <button nz-button class="edit-button" (click)="cancelEdit(data.id)">
-                                <nz-icon nzType="close" nzTheme="outline" />Cancelar
-                            </button>
+                            <div class="btn-actions">
+                                <button nz-button nzType="primary" nzSize="small" (click)="saveEdit(data.id)"
+                                    class="edit-button">
+                                    <nz-icon nzType="save" nzTheme="outline"></nz-icon>
+                                    Salvar
+                                </button>
+                                <button nz-button nzSize="small" (click)="cancelEdit(data.id)" class="edit-button">
+                                    <nz-icon nzType="close" nzTheme="outline"></nz-icon>
+                                    Cancelar
+                                </button>
+                            </div>
                         </ng-template>
                     </td>
+
                 </tr>
             </tbody>
 

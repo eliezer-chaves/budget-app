@@ -263,3 +263,27 @@ th.col-value, td.col-value { width: 20%; }
 th.col-total, td.col-total { width: 15%; }
 th.col-cart, td.col-cart { width: 20%; }
 th.col-actions, td.col-actions { width: 10%; }
+
+/* Estilização correta dos botões na coluna de ações */
+.col-actions {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5rem !important;
+}
+
+/* Wrapper para agrupar os botões verticalmente */
+.btn-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botões com largura fixa e alinhamento uniforme */
+.edit-button {
+  min-width: 100px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
