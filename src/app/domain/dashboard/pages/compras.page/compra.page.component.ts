@@ -80,6 +80,9 @@ export class DashboardPageComponent implements OnInit {
   qtdCarrinhos: number = 1;
   cartsIds: number[] = [];
   purchaseId: number = 0;
+  loadingSearchButton = false
+  termoPesquisa: string = ''
+  loadingTable = false;
 
   valorUnidade: string = '';
   itemQtd: number = 1;
@@ -760,7 +763,7 @@ export class DashboardPageComponent implements OnInit {
       this.updateCartFilters();
       this.updateEditCache();
       this.carregarTotais();
-    
+
 
       this.notificationService.success('Carrinhos atualizados com sucesso!', '');
       this.isVisibleCarrinho = false;
@@ -1019,5 +1022,64 @@ export class DashboardPageComponent implements OnInit {
     this.LoadingService.stopLoading()
   }
 
+  async pesquisarItem() {
+    this.loadingSearchButton = true; // Ativa o loading
+    this.tableItems = []
+    this.loadingTable = true
+    this.LoadingService.startLoading()
+    try {
+      const termo = this.termoPesquisa.trim().toLowerCase();
+
+      // Busca os carrinhos da compra atual
+      const { data: carts, error: cartError } = await this.supabase
+        .from('car_carts')
+        .select('car_id')
+        .eq('car_purchase_id', this.currentPurchaseId);
+
+      const cartIds = carts?.map(c => c.car_id) ?? [];
+
+      // Busca os itens dos carrinhos filtrados
+      const { data: items, error: itemError } = await this.supabase
+        .from('itm_item')
+        .select(`
+            *,
+            car_carts:itm_cart_id (
+              car_id,
+              car_name,
+              car_purchase_id,
+              pur_purchase:car_purchase_id (
+                pur_date,
+                pur_market_name
+              )
+            )
+          `)
+        .in('itm_cart_id', cartIds)
+        .ilike('itm_name', `%${termo}%`);
+
+      console.log(items);
+
+      if (items) {
+       this.tableItems = items.map(item => ({
+        id: item.itm_id,
+        name: item.itm_name,
+        value: item.itm_value,
+        quantity: item.itm_quantity,
+        total: item.itm_total,
+        cart: item.car_carts?.car_name
+      }));
+
+        console.log(this.tableItems);
+      }
+
+    }
+    catch (error) {
+      console.error('Erro ao buscar itens:', error);
+    } finally {
+      this.loadingSearchButton = false;
+      this.LoadingService.stopLoading()
+      this.loadingTable = false
+    }
+
+  }
 
 }

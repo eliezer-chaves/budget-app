@@ -229,6 +229,9 @@ h2 {
 @media (max-width: 768px) {
   .card-container {
     flex-direction: column;
+    width: 100%;
+    align-content: center;
+    justify-content: center;
   }
 
   .cards-wrapper {
@@ -242,9 +245,10 @@ h2 {
   }
 
   .finalizar-button {
-    width: 100%;
     margin-top: 1rem;
+    width: 100%;
   }
+  
 }
 @media (max-width: 380px) {
   .btn-table {
@@ -257,7 +261,7 @@ h2 {
   }
 }
 
-th.col-name, td.col-name { width: 20%; }
+th.col-name, td.col-name { width: 15%; }
 th.col-quantity, td.col-quantity { width: 5%; }
 th.col-value, td.col-value { width: 20%; }
 th.col-total, td.col-total { width: 15%; }
