@@ -134,8 +134,10 @@
                 </button>
             </ng-template>
         </div>
-        <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzShowSizeChanger]="true"
-            [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'" [nzScroll]="{ x: '1100px', y: '500px' }">
+        <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzPageSizeOptions]="pageSizeOptions"
+            [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'"
+            [nzScroll]="{ x: '1100px', y: '500px' }" (nzPageSizeChange)="onPageSizeChange($event)">
+
             <thead>
                 <tr>
                     <th nzLeft class="col-name" [nzSortOrder]="listOfColumns[0].sortOrder"

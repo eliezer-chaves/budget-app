@@ -68,6 +68,7 @@ export class DashboardPageComponent implements OnInit {
   private supabase = injectSupabase();
   private notificationService = inject(NzNotificationService);
   @ViewChildren('inputEl') inputElements!: QueryList<ElementRef>;
+  pageSizeOptions = [5, 10, 20]; // inicialmente
 
   user = signal<iUser | null>(null);
   loading = true;
@@ -592,6 +593,16 @@ export class DashboardPageComponent implements OnInit {
       this.mostrarTabela = true;
       this.updateEditCache();
       this.updateCartFilters(); // Atualiza os filtros após carregar os itens
+      let a = 5, b = 10, c = 20
+      let currentLenght = this.tableItems.length
+      if (currentLenght < a) {
+        this.pageSizeOptions = [this.tableItems.length];
+      } if (currentLenght >= a && currentLenght < b){
+        this.pageSizeOptions = [5, this.tableItems.length];
+      }if (currentLenght >= b && currentLenght < c){
+        this.pageSizeOptions = [5, 10, this.tableItems.length];
+      }
+
     } else {
       this.mostrarTabela = false;
       this.tableItems = [];
@@ -1059,14 +1070,14 @@ export class DashboardPageComponent implements OnInit {
       console.log(items);
 
       if (items) {
-       this.tableItems = items.map(item => ({
-        id: item.itm_id,
-        name: item.itm_name,
-        value: item.itm_value,
-        quantity: item.itm_quantity,
-        total: item.itm_total,
-        cart: item.car_carts?.car_name
-      }));
+        this.tableItems = items.map(item => ({
+          id: item.itm_id,
+          name: item.itm_name,
+          value: item.itm_value,
+          quantity: item.itm_quantity,
+          total: item.itm_total,
+          cart: item.car_carts?.car_name
+        }));
 
         console.log(this.tableItems);
       }
@@ -1081,5 +1092,17 @@ export class DashboardPageComponent implements OnInit {
     }
 
   }
+
+  onPageSizeChange(size: number): void {
+    setTimeout(() => {
+      const options = document.querySelectorAll('.ant-select-item-option-content');
+      options.forEach(option => {
+        if (option.textContent?.trim() === `${this.tableItems.length} / página`) {
+          option.textContent = 'Todos';
+        }
+      });
+    }, 0);
+  }
+
 
 }
