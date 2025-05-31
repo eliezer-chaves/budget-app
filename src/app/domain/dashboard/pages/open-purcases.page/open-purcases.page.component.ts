@@ -301,6 +301,7 @@ export class OpenPurchasesComponent implements OnInit {
     if (error) {
       console.error('Erro ao contar compras em aberto:', error.message);
     } else {
+      
       this.comprasEmAberto = data;
     }
   }

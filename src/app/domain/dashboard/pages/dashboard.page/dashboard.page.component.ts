@@ -119,7 +119,7 @@ export class DashboardPageComponent implements OnInit {
           )
         )`)
         .ilike('itm_name', `%${termo}%`);
-
+        console.log(data)
       if (data) {
         for (let i = 0; i < data.length; i++) {
           this.searchItems[i] = {
