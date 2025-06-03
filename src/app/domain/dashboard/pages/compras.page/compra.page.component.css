@@ -146,9 +146,7 @@ h2 {
 /* RESPONSIVIDADE */
 /* ==================== */
 @media (max-width: 768px) {
-  .container {
-    padding: 1rem !important;
-  }
+ 
 
   [nz-row] {
     flex-direction: column !important;
@@ -248,7 +246,6 @@ h2 {
     margin-top: 1rem;
     width: 100%;
   }
-  
 }
 @media (max-width: 380px) {
   .btn-table {
@@ -261,12 +258,30 @@ h2 {
   }
 }
 
-th.col-name, td.col-name { width: 15%; }
-th.col-quantity, td.col-quantity { width: 5%; }
-th.col-value, td.col-value { width: 20%; }
-th.col-total, td.col-total { width: 15%; }
-th.col-cart, td.col-cart { width: 20%; }
-th.col-actions, td.col-actions { width: 10%; }
+th.col-name,
+td.col-name {
+  width: 15%;
+}
+th.col-quantity,
+td.col-quantity {
+  width: 5%;
+}
+th.col-value,
+td.col-value {
+  width: 20%;
+}
+th.col-total,
+td.col-total {
+  width: 15%;
+}
+th.col-cart,
+td.col-cart {
+  width: 20%;
+}
+th.col-actions,
+td.col-actions {
+  width: 10%;
+}
 
 /* Estilização correta dos botões na coluna de ações */
 .col-actions {
@@ -285,9 +300,38 @@ th.col-actions, td.col-actions { width: 10%; }
 
 /* Botões com largura fixa e alinhamento uniforme */
 .edit-button {
-  min-width: 100px;
   justify-content: center;
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+@media (max-width: 380px) {
+  th.col-name,
+  td.col-name {
+    width: 5%;
+  }
+  th.col-quantity,
+  td.col-quantity {
+    width: 5%;
+  }
+  th.col-value,
+  td.col-value {
+    width: 20%;
+  }
+  th.col-total,
+  td.col-total {
+    width: 15%;
+  }
+  th.col-cart,
+  td.col-cart {
+    width: 20%;
+  }
+  th.col-actions,
+  td.col-actions {
+    width: 10%;
+  }
+  #table-content{
+    width: 90dvw;
+  }
 }

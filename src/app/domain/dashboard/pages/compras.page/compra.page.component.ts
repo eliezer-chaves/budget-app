@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, inject, OnInit, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, QueryList, Renderer2, signal, ViewChild, ViewChildren } from '@angular/core';
 import { AuthService } from '@domain/auth/services/auth.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Data, Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { getISOWeek } from 'date-fns';
+import { getISOWeek, isThisQuarter } from 'date-fns';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerComponent, NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -68,7 +68,7 @@ export class DashboardPageComponent implements OnInit {
   private supabase = injectSupabase();
   private notificationService = inject(NzNotificationService);
   @ViewChildren('inputEl') inputElements!: QueryList<ElementRef>;
-  pageSizeOptions = [5, 10, 20]; // inicialmente
+  pageSizeOptions: number[] = []; // inicialmente
 
   user = signal<iUser | null>(null);
   loading = true;
@@ -266,6 +266,8 @@ export class DashboardPageComponent implements OnInit {
         }))
       };
     });
+    this.updatePageSizeOptions();
+
   }
 
   startEdit(id: number | string): void {
@@ -384,6 +386,7 @@ export class DashboardPageComponent implements OnInit {
       // Atualiza totais e filtros
       await this.carregarTotais();
       this.updateCartFilters();
+      this.updatePageSizeOptions();
 
       this.notificationService.success('Sucesso', 'Item atualizado com sucesso');
     } catch (error) {
@@ -418,6 +421,8 @@ export class DashboardPageComponent implements OnInit {
       // Atualiza totais e filtros
       await this.carregarTotais();
       this.updateCartFilters();
+      this.updatePageSizeOptions();
+      this.loadTable()
 
       this.notificationService.success('Sucesso', 'Item removido com sucesso');
     } catch (error) {
@@ -501,6 +506,8 @@ export class DashboardPageComponent implements OnInit {
         id: cart.car_id.toString()
       }));
       this.qtdCarrinhos = this.listCategory.length
+      this.updatePageSizeOptions();
+
     } catch (error) {
       console.error('Erro no loadData:', error);
     }
@@ -593,21 +600,30 @@ export class DashboardPageComponent implements OnInit {
       this.mostrarTabela = true;
       this.updateEditCache();
       this.updateCartFilters(); // Atualiza os filtros após carregar os itens
-      let a = 5, b = 10, c = 20
-      let currentLenght = this.tableItems.length
-      if (currentLenght < a) {
-        this.pageSizeOptions = [this.tableItems.length];
-      } if (currentLenght >= a && currentLenght < b){
-        this.pageSizeOptions = [5, this.tableItems.length];
-      }if (currentLenght >= b && currentLenght < c){
-        this.pageSizeOptions = [5, 10, this.tableItems.length];
-      }
+
+
+
+      this.updatePageSizeOptions();
 
     } else {
       this.mostrarTabela = false;
       this.tableItems = [];
       this.updateCartFilters(); // Atualiza os filtros mesmo sem itens
     }
+  }
+  updatePageSizeOptions() {
+    let a = 5, b = 10, c = 20
+    let currentLenght = this.tableItems.length
+
+    if (currentLenght <= a) {
+      this.pageSizeOptions = []
+      this.pageSizeOptions = [this.tableItems.length];
+    } if (currentLenght > a && currentLenght <= b) {
+      this.pageSizeOptions = [a, this.tableItems.length];
+    } if (currentLenght > b && currentLenght <= c) {
+      this.pageSizeOptions = [a, b, this.tableItems.length];
+    } if (currentLenght > c)
+      this.pageSizeOptions = [a, b, c, this.tableItems.length];
   }
 
   trackById(index: number, item: any): any {
@@ -648,6 +664,9 @@ export class DashboardPageComponent implements OnInit {
       this.limparInputs();
       this.loadTable()
       this.carregarTotais()
+      this.focoInput()
+      this.updatePageSizeOptions();
+
     } catch {
 
     } finally {
@@ -655,6 +674,13 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
+  @ViewChild('itemInput') itemInput!: ElementRef<HTMLInputElement>;
+
+  focoInput() {
+    setTimeout(() => {
+      this.itemInput.nativeElement.focus();
+    });
+  }
   getCartName(cartId: string): string {
     const dadosSalvos: string | null = localStorage.getItem('ultimaCompra');
     if (dadosSalvos) {
@@ -774,6 +800,7 @@ export class DashboardPageComponent implements OnInit {
       this.updateCartFilters();
       this.updateEditCache();
       this.carregarTotais();
+      this.updatePageSizeOptions();
 
 
       this.notificationService.success('Carrinhos atualizados com sucesso!', '');
@@ -794,50 +821,7 @@ export class DashboardPageComponent implements OnInit {
     // Cria uma cópia profunda da lista atual para comparação posterior
     this.tempListCategory = JSON.parse(JSON.stringify(this.listCategory));
   }
-  // async updateCarrinhos() {
-  //   this.LoadingService.startLoading();
 
-  //   try {
-  //     console.log('list', this.listCategory)
-
-
-  //     for (let i = 0; i < this.listCategory.length; i++) {
-  //       if (this.listCategory[i].id == "") {
-  //         const { error: insertError } = await this.supabase
-  //           .from('car_carts')
-  //           .insert({
-  //             car_name: this.listCategory[i].nome,
-  //             car_auth_id: this.auth.currentUser()?.id,
-  //             car_purchase_id: this.currentPurchaseId
-  //           })
-  //       } else {
-  //         const { data, error } = await this.supabase
-  //           .from('car_carts')
-  //           .update({
-  //             car_name: this.listCategory[i].nome
-  //           })
-  //           .eq('car_id', this.listCategory[i].id)
-  //       }
-  //     }
-
-  //     this.loadData()
-  //     this.loadTable()
-  //     // Atualiza os filtros da tabela
-  //     this.updateCartFilters();
-  //     // Atualiza o cache de edição
-  //     this.updateEditCache();
-  //     // Atualiza os totais
-  //     this.carregarTotais();
-  //     this.LoadingService.stopLoading();
-  //     this.notificationService.success('Carrinhos atualizados com sucesso!', '');
-  //     this.isVisibleCarrinho = false;
-  //   } catch {
-  //     this.notificationService.error('Não foi possivel alterar', '');
-
-  //   } finally {
-  //     this.isVisibleCarrinho = false;
-  //   }
-  // }
 
   onQtdCarrinhosChange(newValue: number) {
     const currentLength = this.listCategory.length;
@@ -936,45 +920,6 @@ export class DashboardPageComponent implements OnInit {
       this.LoadingService.stopLoading()
       this.router.navigate(['/'])
 
-      // const dadosSalvos = localStorage.getItem('ultimaCompra');
-      // if (!dadosSalvos) {
-      //   this.notificationService.error('Erro', 'Nenhuma compra encontrada');
-      //   return;
-      // }
-
-      // const dadosCompra: PurchaseData = JSON.parse(dadosSalvos);
-
-      // if (!dadosCompra.items || dadosCompra.items.length === 0) {
-      //   this.notificationService.warning('Aviso', 'Nenhum item para salvar');
-      //   return;
-      // }
-
-      // for (let i = 0; i < dadosCompra.items.length; i++) {
-      //   const { data, error } = await this.supabase
-      //     .from('itm_item')
-      //     .insert([
-      //       {
-      //         itm_name: dadosCompra.items[i].itm_name,
-      //         itm_value: dadosCompra.items[i].itm_value,
-      //         itm_quantity: dadosCompra.items[i].itm_quantity,
-      //         itm_total: dadosCompra.items[i].itm_total,
-      //         itm_cart_id: dadosCompra.items[i].itm_cart_id,
-      //         itm_auth_id: this.user()?.id
-      //       },
-      //     ])
-      // }
-
-      // const { data, error } = await this.supabase
-      //   .from('pur_purchase')
-      //   .update({ pur_state: true })
-      //   .eq('pur_id', dadosCompra.purchaseId)
-
-
-      // this.notificationService.success('Sucesso', 'Compra salva com sucesso');
-      // if (localStorage.getItem('ultimaCompra')) {
-      //   localStorage.removeItem('ultimaCompra');
-      // }
-
 
     } catch (error) {
       console.error('Erro ao preparar dados:', error);
@@ -982,13 +927,12 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  // voltar() {
-  //   this.LoadingService.startLoading()
-  //   this.router.navigate(['dashboard'])
-  //   this.LoadingService.stopLoading()
-  // }
 
-  constructor(private modal: NzModalService) { }
+  constructor(
+    private modal: NzModalService,
+    private renderer: Renderer2,
+    private modalDeleteAlL: NzModalService
+  ) { }
 
   showDeleteConfirm(): void {
     this.modal.confirm({
@@ -1032,6 +976,12 @@ export class DashboardPageComponent implements OnInit {
     //this.router.navigate(['dashboard'])
     this.LoadingService.stopLoading()
   }
+  @ViewChild('inputSearch') inputSearch!: ElementRef<HTMLInputElement>;
+
+  async limparPesquisa() {
+    this.loadTable()
+    this.inputSearch.nativeElement.value = ''
+  }
 
   async pesquisarItem() {
     this.loadingSearchButton = true; // Ativa o loading
@@ -1067,7 +1017,6 @@ export class DashboardPageComponent implements OnInit {
         .in('itm_cart_id', cartIds)
         .ilike('itm_name', `%${termo}%`);
 
-      console.log(items);
 
       if (items) {
         this.tableItems = items.map(item => ({
@@ -1079,8 +1028,8 @@ export class DashboardPageComponent implements OnInit {
           cart: item.car_carts?.car_name
         }));
 
-        console.log(this.tableItems);
       }
+      this.updatePageSizeOptions();
 
     }
     catch (error) {
@@ -1089,20 +1038,41 @@ export class DashboardPageComponent implements OnInit {
       this.loadingSearchButton = false;
       this.LoadingService.stopLoading()
       this.loadingTable = false
+      this.updatePageSizeOptions();
+
     }
 
   }
 
-  onPageSizeChange(size: number): void {
-    setTimeout(() => {
-      const options = document.querySelectorAll('.ant-select-item-option-content');
-      options.forEach(option => {
-        if (option.textContent?.trim() === `${this.tableItems.length} / página`) {
-          option.textContent = 'Todos';
-        }
-      });
-    }, 0);
+  async limparCompra() {
+    this.limparPesquisa()
+    try {
+      for (let i = 0; i < this.tableItems.length; i++) {
+        const { error } = await this.supabase
+          .from('itm_item')
+          .delete()
+          .eq('itm_id', this.tableItems[i].id)
+      }
+
+      this.notificationService.success("Lista limpa", "Sua compra foi limpa com sucesso!")
+      this.loadTable()
+    }
+    catch {
+      this.notificationService.error("Erro", "Não foi possível limpar a compra")
+      this.loadTable()
+    }
   }
 
-
+  showDeleteAllConfirm(): void {
+    this.modal.confirm({
+      nzTitle: '<i>Você tem certeza que quer exlcluir todos os itens?</i>',
+      nzContent: '<b style="color: red;">Todos os itens dessa compra serão deletados e não será possível recuperá-los...</b>',
+      nzOkText: 'Exluir Itens',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.limparCompra(),
+      nzCancelText: 'Voltar',
+      nzOnCancel: () => ''
+    });
+  }
 }

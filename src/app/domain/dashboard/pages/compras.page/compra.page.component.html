@@ -29,7 +29,7 @@
         </div>
         <div nz-col nzSpan="12">
             <nz-input-group nzAddOnBefore="Item">
-                <input type="text" nz-input [(ngModel)]="item" class="w-100" />
+                <input type="text" #itemInput nz-input [(ngModel)]="item" class="w-100" />
             </nz-input-group>
 
         </div>
@@ -120,23 +120,36 @@
         </div>
     </div>
     <div class="mt-4">
-        <div class="mb-3">
-            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="max-width: 300px;">
-                <input type="text" nz-input placeholder="Pesquisar item..." [(ngModel)]="termoPesquisa"
-                    (keyup.enter)="pesquisarItem()" />
-            </nz-input-group>
+        <div class="mb-3 d-flex ">
+            <div class="">
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="max-width: 300px;">
+                    <input type="text" nz-input placeholder="Pesquisar item..." [(ngModel)]="termoPesquisa" #inputSearch
+                        (keyup.enter)="pesquisarItem()" />
+                </nz-input-group>
 
-            <ng-template #suffixIconButton>
-                <button nz-button nzType="primary" nzSize="default" nzSearch (click)="pesquisarItem()"
-                    [nzLoading]="loadingSearchButton">
-                    Pesquisar
-                    <nz-icon nzType="search" nzTheme="outline" />
+                <ng-template #suffixIconButton>
+                    <button nz-button nzType="primary" nzSize="default" nzSearch (click)="pesquisarItem()"
+                        [nzLoading]="loadingSearchButton">
+                        Pesquisar
+                        <nz-icon nzType="search" nzTheme="outline" />
+                    </button>
+                </ng-template>
+            </div>
+            <div>
+                <button nz-button nzType="primary" [nzShape]="'circle'" (click)="limparPesquisa()">
+                    <nz-icon nzType="clear" nzTheme="outline" />
                 </button>
-            </ng-template>
+            </div>
+            <div>
+                <button nz-button nzType="primary"  nzDanger (click)="showDeleteAllConfirm()">Excluir todos os intens
+                    <nz-icon nzType="delete" nzTheme="outline" />
+                </button>
+
+            </div>
         </div>
         <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzPageSizeOptions]="pageSizeOptions"
             [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'"
-            [nzScroll]="{ x: '1100px', y: '500px' }" (nzPageSizeChange)="onPageSizeChange($event)">
+            [nzScroll]="{ x: '1100px' }" [nzPageSize]="pageSizeOptions[0]">
 
             <thead>
                 <tr>
