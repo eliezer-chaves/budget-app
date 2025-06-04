@@ -146,8 +146,6 @@ h2 {
 /* RESPONSIVIDADE */
 /* ==================== */
 @media (max-width: 768px) {
- 
-
   [nz-row] {
     flex-direction: column !important;
   }
@@ -331,7 +329,68 @@ td.col-actions {
   td.col-actions {
     width: 10%;
   }
-  #table-content{
+  #table-content {
     width: 90dvw;
+  }
+}
+.div-buttons-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.div-buttons-table-search-group {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 400px;
+}
+
+.div-buttons-table-search {
+  flex: 1;
+  min-width: 0;
+}
+
+.div-buttons-table-clear-button {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.div-buttons-table-delelte-all-button {
+  white-space: nowrap;
+}
+
+/* Responsivo */
+@media (max-width: 767px) {
+  .div-buttons-table {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .div-buttons-table-search-group {
+    width: 100%;
+  }
+
+  .div-buttons-table-search {
+    width: 100%;
+  }
+
+  .div-buttons-table-clear-button {
+    margin-top: 0.5rem;
+    align-self: flex-end;
+  }
+
+  .div-buttons-table-delelte-all-button {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .div-buttons-table-delelte-all-button button {
+    width: 100%;
   }
 }

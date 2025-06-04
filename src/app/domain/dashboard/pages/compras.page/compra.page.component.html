@@ -120,10 +120,11 @@
         </div>
     </div>
     <div class="mt-4">
-        <div class="mb-3 d-flex ">
-            <div class="">
-                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="max-width: 300px;">
-                    <input type="text" nz-input placeholder="Pesquisar item..." [(ngModel)]="termoPesquisa" #inputSearch
+        <div class="mb-3 div-buttons-table">
+            <!-- Pesquisa + botão de limpar -->
+            <div class="div-buttons-table-search-group">
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" class="div-buttons-table-search">
+                    <input type="text"  nz-input placeholder="Pesquisar item..." [(ngModel)]="termoPesquisa" #inputSearch
                         (keyup.enter)="pesquisarItem()" />
                 </nz-input-group>
 
@@ -134,19 +135,23 @@
                         <nz-icon nzType="search" nzTheme="outline" />
                     </button>
                 </ng-template>
-            </div>
-            <div>
-                <button nz-button nzType="primary" [nzShape]="'circle'" (click)="limparPesquisa()">
+
+                <button class="div-buttons-table-clear-button" nz-button nzType="primary" [nzShape]="'circle'"
+                    (click)="limparPesquisa()">
                     <nz-icon nzType="clear" nzTheme="outline" />
                 </button>
             </div>
-            <div>
-                <button nz-button nzType="primary"  nzDanger (click)="showDeleteAllConfirm()">Excluir todos os intens
+
+            <!-- Excluir todos -->
+            <div class="div-buttons-table-delelte-all-button">
+                <button nz-button nzType="primary" nzDanger (click)="showDeleteAllConfirm()">
+                    Excluir todos os intens
                     <nz-icon nzType="delete" nzTheme="outline" />
                 </button>
-
             </div>
         </div>
+
+
         <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzPageSizeOptions]="pageSizeOptions"
             [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'"
             [nzScroll]="{ x: '1100px' }" [nzPageSize]="pageSizeOptions[0]">

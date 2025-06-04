@@ -278,6 +278,23 @@ nz-range-picker {
   justify-content: space-between;
   align-items: center;
 }
+.header-table-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.header-table-date-picker{
+  width: 100%;
+}
+
 
 /* Media query para telas pequenas */
 @media (max-width: 800px) {

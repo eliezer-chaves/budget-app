@@ -251,6 +251,19 @@ export class OpenPurchasesComponent implements OnInit {
       this.loadDataForSelectedPeriod();
     }
   }
+  setPreviousMonthRange() {
+    const baseDate = this.periodo?.[0] ?? new Date();
+    const firstDay = new Date(baseDate.getFullYear(), baseDate.getMonth() - 1, 1);
+    const lastDay = new Date(baseDate.getFullYear(), baseDate.getMonth(), 0);
+    this.periodo = [firstDay, lastDay];
+  }
+
+  setNextMonthRange() {
+    const baseDate = this.periodo?.[0] ?? new Date();
+    const firstDay = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 1);
+    const lastDay = new Date(baseDate.getFullYear(), baseDate.getMonth() + 2, 0);
+    this.periodo = [firstDay, lastDay];
+  }
 
   setCurrentMonthRange() {
     const now = new Date();
@@ -301,7 +314,7 @@ export class OpenPurchasesComponent implements OnInit {
     if (error) {
       console.error('Erro ao contar compras em aberto:', error.message);
     } else {
-      
+
       this.comprasEmAberto = data;
     }
   }
