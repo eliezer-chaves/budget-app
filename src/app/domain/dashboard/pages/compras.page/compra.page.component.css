@@ -155,10 +155,6 @@ h2 {
     max-width: 100% !important;
   }
 
-  nz-table {
-    overflow-x: auto;
-    display: block;
-  }
 
   .edit-button,
   .button-wrapper button {
@@ -381,13 +377,11 @@ td.col-actions {
   }
 
   .div-buttons-table-clear-button {
-    margin-top: 0.5rem;
     align-self: flex-end;
   }
 
   .div-buttons-table-delelte-all-button {
     width: 100%;
-    margin-top: 1rem;
   }
 
   .div-buttons-table-delelte-all-button button {

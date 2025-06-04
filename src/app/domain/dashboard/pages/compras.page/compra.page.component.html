@@ -153,8 +153,8 @@
 
 
         <nz-table #borderedTable nzBordered nzSize="small" [nzData]="tableItems" [nzPageSizeOptions]="pageSizeOptions"
-            [nzShowSizeChanger]="true" [nzShowTotal]="rangeTemplate" [nzPaginationPosition]="'bottom'"
-            [nzScroll]="{ x: '1100px' }" [nzPageSize]="pageSizeOptions[0]">
+            [nzShowSizeChanger]="true" [nzHideOnSinglePage]="true" [nzPaginationPosition]="'bottom'"
+            [nzScroll]="{ x: '1100px', y:'9000px' }" [nzPageSize]="pageSizeOptions[0]">
 
             <thead>
                 <tr>
@@ -277,11 +277,9 @@
             </tbody>
 
             <ng-template #rangeTemplate let-range="range" let-total>
-                Total de itens: {{ total }}
+                Total: {{ total }}
             </ng-template>
-            <ng-template #titleTemplate>
-                Total de itens: {{ mercado }}
-            </ng-template>
+            
         </nz-table>
     </div>
 </div>
