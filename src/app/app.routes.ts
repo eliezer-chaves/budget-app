@@ -4,6 +4,7 @@ import { redirectIfLoggedInGuard } from '@core/guards/redirectIfLoggedInGuard.gu
 import { AUTH_ROUTES } from '@domain/auth/auth.routes';
 import { DASHBOARD_ROUTES } from '@domain/dashboard/dashboard.routes'
 import { DashboardLayoutComponent } from '@core/layout/dashboard/dashboard.layout/dashboard.layout.component'
+import { PROFILE_ROUTES } from '@domain/profile/profile.routes';
 // src/app/app.routes.ts
 export const routes: Routes = [
     {
@@ -21,5 +22,12 @@ export const routes: Routes = [
         canActivate: [isLoggedInGuard],
         loadComponent: () => import('@core/layout/dashboard/dashboard.layout/dashboard.layout.component').then(m => m.DashboardLayoutComponent),
         children: DASHBOARD_ROUTES
+    },
+    {
+        path: 'profile',
+        canActivate: [isLoggedInGuard],
+        loadComponent: () =>
+            import('@core/layout/dashboard/dashboard.layout/dashboard.layout.component').then(m => m.DashboardLayoutComponent),
+        children: PROFILE_ROUTES
     }
 ];

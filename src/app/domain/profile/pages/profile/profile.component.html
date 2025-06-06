@@ -1,0 +1,61 @@
+<div class="bg-white rounded p-4 shadow">
+  <h4 class="text-center">Atualize seus dados</h4>
+
+  <form nz-form [nzLayout]="'vertical'" [formGroup]="form" (ngSubmit)="atualizarUsuario()">
+    <nz-row [nzGutter]="16">
+      <!-- Email -->
+      <nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label>Email:</nz-form-label>
+          <nz-form-control [nzErrorTip]="'Email inválido ou obrigatório'">
+            <input nz-input formControlName="email" placeholder="Digite seu email" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <!-- Nome -->
+      <nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label>Nome:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="name" placeholder="Digite seu nome" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+      <!-- Telefone -->
+      <nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label>Telefone:</nz-form-label>
+          <nz-form-control [nzErrorTip]="'Telefone é obrigatório'">
+            <input nz-input formControlName="telefone" placeholder="Digite seu telefone"
+              mask="(00) 0000-0000||(00) 00000-0000" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+
+
+      <!-- Endereço -->
+      <nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label>Endereço:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="address" placeholder="Digite seu endereço" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+
+    </nz-row>
+
+    <!-- Botão Atualizar -->
+    <nz-form-item>
+      <nz-form-control>
+        <button nzBlock nz-button nzType="primary" type="submit" [nzLoading]="loadingService.loading()">
+          Atualizar
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+
+  </form>
+</div>

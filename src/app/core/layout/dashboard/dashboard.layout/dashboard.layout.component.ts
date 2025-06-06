@@ -1,6 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '@domain/auth/services/auth.service';
+import { injectSupabase } from '@shared/functions/inject-supabase.function';
 
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -16,6 +18,8 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 })
 export class DashboardLayoutComponent {
   private router = inject(Router);
+  private supabase = injectSupabase();
+  private auth = inject(AuthService);
   isCollapsed = true;
 
   constructor(private elementRef: ElementRef) { }
@@ -27,6 +31,11 @@ export class DashboardLayoutComponent {
 
   openPurchases() {
     this.router.navigate(['dashboard/orcamentos-abertos']);
+    this.toggleSider()
+  }
+
+  goToProfile() {
+    this.router.navigate(['profile']);
     this.toggleSider()
   }
 
@@ -50,4 +59,8 @@ export class DashboardLayoutComponent {
     }
   }
 
+  async logout() {
+    this.auth.purgeAndRedirect()
+    this.router.navigate(['auth']);
+  }
 }

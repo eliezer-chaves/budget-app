@@ -102,7 +102,6 @@ export class AuthService {
     }
 
     async loginWithGoogle(): Promise<void> {
-        console.log('Clique no botão de login com Google');
 
         try {
             const { data, error } = await this.supabase.auth.signInWithOAuth({

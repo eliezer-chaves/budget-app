@@ -8,7 +8,7 @@
 }
 
 .trigger:hover {
-  color: #1890ff;
+  color: rgb(165, 165, 165);
 }
 
 .logo {
@@ -48,7 +48,6 @@ nz-header {
 .header-center h2 {
   color: white;
   margin: 0;
- 
 }
 
 nz-content {

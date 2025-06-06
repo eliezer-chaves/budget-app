@@ -1,5 +1,6 @@
 <div class="bg-white rounded p-4 shadow " style="width: 400px;">
-  <h4 class="text-center">Login</h4>
+  <h2 class="text-center">ThaEconomic</h2>
+  <p class="text-left">Controlador de compras, seu histórico de compras para melhor planejamento</p>
   <form nz-form nzLayout="vertical" [formGroup]="formularioLogin">
     <nz-form-item>
       <nz-form-label nzFor="email">E-mail:</nz-form-label>
@@ -7,10 +8,7 @@
         <input nz-input type="email" formControlName="email" placeholder="Digite sua email"/>
       </nz-form-control>
     </nz-form-item>
-
-
     <nz-form-item>
-    
       <nz-form-label>Senha:</nz-form-label>
       <nz-form-control [nzErrorTip]="'Senha deve ter no mínimo 6 caracteres'">
         <nz-input-group [nzSuffix]="passwordSuffix">
