@@ -35,16 +35,69 @@
 
 
 
-      <!-- Endereço -->
+      <!-- CEP -->
       <nz-col [nzSpan]="24">
         <nz-form-item>
-          <nz-form-label>Endereço:</nz-form-label>
+          <nz-form-label>CEP:</nz-form-label>
           <nz-form-control>
-            <input nz-input formControlName="address" placeholder="Digite seu endereço" />
+            <input nz-input formControlName="cep" (input)="viaCEPApi($event)"
+              placeholder="Informe o seu endereço" mask="00000-000" />
           </nz-form-control>
         </nz-form-item>
       </nz-col>
 
+      <nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label>Rua:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="rua" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+      <nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label>Número:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="numero" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+      <nz-col [nzSpan]="16">
+        <nz-form-item>
+          <nz-form-label>Complemento:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="complemento" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzSpan]="10">
+        <nz-form-item>
+          <nz-form-label>Bairro:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="bairro" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+      <nz-col [nzSpan]="10">
+        <nz-form-item>
+          <nz-form-label>Cidade:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="cidade" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+      <nz-col [nzSpan]="4">
+        <nz-form-item>
+          <nz-form-label>UF:</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="uf" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
 
     </nz-row>
 

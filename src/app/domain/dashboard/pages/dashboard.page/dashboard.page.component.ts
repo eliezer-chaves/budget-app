@@ -95,7 +95,7 @@ export class DashboardPageComponent implements OnInit {
   loadingCards = true
   isVisiblePurchases = false
   isVisibleNewPurchase = false
-
+  userName: string = ''
 
   ngOnInit() {
     this.loadData();
@@ -107,10 +107,10 @@ export class DashboardPageComponent implements OnInit {
     this.loadingTable = true
     this.LoadingService.startLoading()
     try {
-    const termo = this.termoPesquisa.trim().toLowerCase();
-    const { data, error } = await this.supabase
-      .from('itm_item')
-      .select(`
+      const termo = this.termoPesquisa.trim().toLowerCase();
+      const { data, error } = await this.supabase
+        .from('itm_item')
+        .select(`
         *,
         car_carts:itm_cart_id (
           car_purchase_id,
@@ -118,19 +118,19 @@ export class DashboardPageComponent implements OnInit {
             pur_date, pur_market_name
           )
         )`)
-      .ilike('itm_name', `%${termo}%`);
+        .ilike('itm_name', `%${termo}%`);
 
-    if (data) {
-      for (let i = 0; i < data.length; i++) {
-        this.searchItems[i] = {
-          date: data[i].car_carts.pur_purchase.pur_date,
-          name: data[i].itm_name,
-          price: data[i].itm_value,
-          place: data[i].car_carts.pur_purchase.pur_market_name,
-          quantity: data[i].itm_quantity
-        };
+      if (data) {
+        for (let i = 0; i < data.length; i++) {
+          this.searchItems[i] = {
+            date: data[i].car_carts.pur_purchase.pur_date,
+            name: data[i].itm_name,
+            price: data[i].itm_value,
+            place: data[i].car_carts.pur_purchase.pur_market_name,
+            quantity: data[i].itm_quantity
+          };
+        }
       }
-    }
     }
     catch (error) {
       console.error('Erro ao buscar itens:', error);
@@ -185,6 +185,14 @@ export class DashboardPageComponent implements OnInit {
         this.loadTotalGasto()
         this.contarCompras()
         this.contarComprasEmAberto()
+
+        let { data: tbl_users, error } = await this.supabase
+          .from('tbl_users')
+          .select('usr_name')
+          .eq('usr_auth_id', this.user()?.id);
+        if (tbl_users && tbl_users.length > 0) {
+          this.userName = tbl_users[0].usr_name;
+        }
 
       } else {
         this.message.error('Sessão inválida. Faça login novamente.');

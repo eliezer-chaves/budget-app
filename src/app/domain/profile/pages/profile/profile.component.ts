@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, Inject, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -13,6 +13,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { iUser } from '@domain/auth/interfaces/user.interface';
 import { injectSupabase } from '@shared/functions/inject-supabase.function';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { ViacepService } from '@shared/services/api/viacep.service';
 
 @Component({
   standalone: true,
@@ -28,8 +30,10 @@ import { injectSupabase } from '@shared/functions/inject-supabase.function';
     NzFlexModule,
     NzDividerModule,
     NzIconModule,
+    NgxMaskDirective
+  ],
+  providers: [provideNgxMask()],
 
-  ]
 })
 export class ProfileComponent implements OnInit {
 
@@ -48,13 +52,25 @@ export class ProfileComponent implements OnInit {
   email: string = '';
   password: string = '';
   phone: string = '';
-  address: string = '';
+  cep: string = '';
+  numero: string = '';
+  rua: string = '';
+  bairro: string = '';
+  cidade: string = '';
+  uf: string = '';
+  complemento: string = '';
 
   form: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
     telefone: new FormControl('', Validators.required),
-    email: new FormControl({value: '', disabled: true}, [Validators.required, Validators.email]),
-    address: new FormControl(''),
+    email: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.email]),
+    cep: new FormControl(''),
+    numero: new FormControl(''),
+    rua: new FormControl(''),
+    bairro: new FormControl(''),
+    cidade: new FormControl(''),
+    uf: new FormControl(''),
+    complemento: new FormControl(''),
   });
 
   constructor() { }
@@ -69,8 +85,6 @@ export class ProfileComponent implements OnInit {
       this.user.set(await currentUser);
       this.currentUserId = this.user()?.id
     }
-    console.log(this.currentUserId)
-
     try {
 
       let { data: user, error } = await this.supabase
@@ -85,7 +99,13 @@ export class ProfileComponent implements OnInit {
           name: user[0].usr_name,
           telefone: user[0].usr_phone,
           email: user[0].usr_email,
-          address: "",
+          cep: user[0].usr_address?.cep,
+          numero: user[0].usr_address?.numero,
+          rua: user[0].usr_address?.rua,
+          bairro: user[0].usr_address?.bairro,
+          cidade: user[0].usr_address?.cidade,
+          uf: user[0].usr_address?.uf,
+          complemento: user[0].usr_address?.complemento,
         })
 
       }
@@ -96,8 +116,60 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  atualizarUsuario() {
+  async atualizarUsuario() {
+    try {
+      this.loadingService.startLoading()
+      const endereco = {
+        cep: this.form.get('cep')?.value,
+        numero: this.form.get('numero')?.value,
+        rua: this.form.get('rua')?.value,
+        bairro: this.form.get('bairro')?.value,
+        cidade: this.form.get('cidade')?.value,
+        uf: this.form.get('uf')?.value,
+        complemento: this.form.get('complemento')?.value
+      };
+
+      const { error } = await this.supabase
+        .from('tbl_users')
+        .update({
+          usr_name: this.form.get('name')?.value,
+          usr_phone: this.form.get('telefone')?.value,
+          usr_address: endereco
+        })
+        .eq('usr_auth_id', this.currentUserId);
+      this.loadingService.stopLoading()
+      this.notificationService.success('Sucesso', 'Usuário atualizado com sucesso');
+    }
+    catch {
+      this.loadingService.stopLoading()
+      this.notificationService.error('Erro', 'Não foi possível atualizar o usuário');
+    }
 
   }
+
+  private viacep = inject(ViacepService);
+
+  viaCEPApi(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const cep = input.value.replace(/\D/g, '');
+
+    if (cep.length === 8) {
+      this.viacep.buscarCep(cep).subscribe({
+        next: (dados) => {
+
+          this.form.patchValue({
+            rua: dados.logradouro,
+            bairro: dados.bairro,
+            cidade: dados.localidade,
+            uf: dados.uf,
+          });
+        },
+        error: () => {
+          this.notificationService.error('Erro', 'Não foi possível buscar o CEP');
+        }
+      });
+    }
+  }
+
 
 }
