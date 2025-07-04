@@ -101,30 +101,32 @@
 
   <div class="mt-4" *ngIf="searchItems.length != 0;">
     <nz-spin [nzSpinning]="loadingTable">
-      <nz-table #borderedTable nzBordered [nzData]="searchItems" [nzShowPagination]="false" class="">
-        <thead>
-          <tr>
-            <th class="text-center">Data</th>
-            <th class="text-center">Nome</th>
-            <th class="text-center">Preço</th>
-            <th class="text-center">Quantidade</th>
-            <th class="text-center">Lugar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of searchItems" class="text-center">
-            <td class="text-center">{{ item.date | date: 'dd/MM/yyyy' }}</td>
-            <td class="text-center">{{ item.name }}</td>
-            <td class="text-center">
-              {{ item.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-            </td>
-            <td class="text-center">
-              {{item.quantity}}
-            </td>
-            <td class="text-center">{{ item.place }}</td>
-          </tr>
-        </tbody>
-      </nz-table>
+      <div class="responsive-table-container">
+        <nz-table #borderedTable nzBordered [nzData]="searchItems" [nzShowPagination]="false" class="responsive-table">
+          <thead>
+            <tr>
+              <th class="text-center">Data</th>
+              <th class="text-center">Nome</th>
+              <th class="text-center">Preço</th>
+              <th class="text-center">Quantidade</th>
+              <th class="text-center">Lugar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of searchItems" class="text-center">
+              <td class="text-center">{{ item.date | date: 'dd/MM/yyyy' }}</td>
+              <td class="text-center">{{ item.name }}</td>
+              <td class="text-center">
+                {{ item.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+              <td class="text-center">
+                {{item.quantity}}
+              </td>
+              <td class="text-center">{{ item.place }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
     </nz-spin>
   </div>
 </div>

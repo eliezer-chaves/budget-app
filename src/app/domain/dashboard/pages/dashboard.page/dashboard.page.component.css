@@ -240,3 +240,35 @@ nz-badge {
     justify-content: space-between;
   }
 }
+/* Adicione isso ao seu arquivo de estilos */
+@media (max-width: 580px) {
+  .responsive-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+  }
+
+  .responsive-table {
+    min-width: 580px; /* Ajuste conforme necessário */
+    width: 100%;
+  }
+
+  .responsive-table th,
+  .responsive-table td {
+    white-space: nowrap;
+    padding: 8px 12px;
+  }
+
+  /* Opcional: estilo para indicar que há scroll */
+  .responsive-table-container::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .responsive-table-container::-webkit-scrollbar-thumb {
+    background: #1890ff;
+    border-radius: 10px;
+  }
+}
