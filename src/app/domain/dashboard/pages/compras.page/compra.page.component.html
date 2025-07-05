@@ -212,7 +212,7 @@
                             {{ data.quantity }}
                         </ng-container>
                         <ng-template #editQuantity>
-                            <nz-input-number [(ngModel)]="editCache[data.id].data.quantity" nzMin="1" nzStep="0.1"
+                            <nz-input-number [(ngModel)]="editCache[data.id].data.quantity" nzMin="0" nzStep="0.1"
                                 (ngModelChange)="updateItemTotal(data.id)">
                             </nz-input-number>
                         </ng-template>
